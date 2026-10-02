@@ -8,8 +8,8 @@ const copy = {
     heroEyebrow: "¿Qué es Saphe Science?",
     heroTitle:
       "Saphe sCience es una academia online especializada en matemáticas y física para ESO y Bachillerato.",
-    heroPrimary: "Ver horario",
-    heroSecondary: "Pedir informacion",
+    heroPrimary: "Reserva una clase",
+    heroSecondary: "",
     proofYears:
       "Orientado en la eficacia y eficiencia.",
     proofSubjects: "En uno mismo, la clave es no rendirse.",
@@ -28,27 +28,27 @@ const copy = {
     physicsText:
       "Cinematica, dinamica, energia, campos y problemas numericos. Conectamos formulas, unidades y significado fisico.",
     methodEyebrow: "FAQS",
-    methodTitle: "FAQs",
+    methodTitle: "FAQs:",
     stepOneTitle: "¿Cómo empiezo?",
     stepOneText:
       "Ponte en contacto con nosotros y te ayudaremos a elegir el horario que mejor se adapte a ti.",
     stepTwoTitle: "¿Dónde se imparten las clases?",
     stepTwoText:
-      "Una vez creado el perfil del alumn@, aparecerá un enlace para unirte a la clase a través del correo electrónico.",
+      "Una vez creado el perfil del alumno, aparecerá un enlace para unirte a la clase a través del correo electrónico.",
     stepThreeTitle: "¿Seguimiento?",
     stepThreeText:
-      "El alumn@ tendrá acceso a los pdf de la clase, un horario actualizado de las tareas y las notas para que el seguimiento sea el adecuado.",
+      "El alumno tendrá acceso a los pdf de la clase, un horario actualizado de las tareas y las notas para que el seguimiento sea el adecuado.",
     scheduleEyebrow: "Disponibilidad",
-    scheduleTitle: "Reserva una clase",
+    scheduleTitle: "Contacto",
     availabilityIntro:
       "Si quieres informacion sobre disponibilidad, mandanos un mensaje al",
     availabilityPhone: "+34 660 74 37 39",
     availabilityMiddle: "o escribenos un correo a",
-    contactEyebrow: "Contacto",
+    contactEyebrow: "Reserva una clase:",
     contactTitle: "Cuéntanos curso, asignatura y objetivo.",
     contactText:
-      "Te orientamos con el mejor punto de partida y buscamos un hueco que encaje con el alumn@.",
-    footerText: "Matematicas y fisica online en castellano.",
+      "Te orientamos con el mejor punto de partida y buscamos un hueco que encaje con el alumno.",
+    footerText: "Academia",
     time: "Hora",
     available: "Libre",
     busy: "No disponible",
@@ -84,8 +84,8 @@ const copy = {
     heroEyebrow: "What is Saphe Science?",
     heroTitle:
       "Saphe sCience is an online academy specialising in mathematics and physics for secondary and sixth-form students.",
-    heroPrimary: "View schedule",
-    heroSecondary: "Request info",
+    heroPrimary: "Book a class",
+    heroSecondary: "",
     proofYears:
       "Focused on effectiveness and efficiency.",
     proofSubjects: "Self-confidence: the key is not giving up.",
@@ -104,7 +104,7 @@ const copy = {
     physicsText:
       "Kinematics, dynamics, energy, fields and numerical problems. We connect formulas, units and physical meaning.",
     methodEyebrow: "FAQS",
-    methodTitle: "FAQs",
+    methodTitle: "FAQs:",
     stepOneTitle: "How do I start?",
     stepOneText:
       "Get in touch with us and we will help you choose the schedule that suits you best.",
@@ -115,16 +115,16 @@ const copy = {
     stepThreeText:
       "The student will have access to the class PDFs, an updated task schedule and the notes so the follow-up is appropriate.",
     scheduleEyebrow: "Availability",
-    scheduleTitle: "Book a class",
+    scheduleTitle: "Contact",
     availabilityIntro:
       "If you want information about availability, send us a message at",
     availabilityPhone: "+34 660 74 37 39",
     availabilityMiddle: "or email us at",
-    contactEyebrow: "Contact",
+    contactEyebrow: "Book a class:",
     contactTitle: "Tell us the course, subject and goal.",
     contactText:
       "We will guide you towards the best starting point and find a slot that fits the student.",
-    footerText: "Online mathematics and physics in Spanish.",
+    footerText: "Academy",
     time: "Time",
     available: "Open",
     busy: "Unavailable",
