@@ -7,7 +7,7 @@ const copy = {
     userButton: "Mi perfil",
     heroEyebrow: "¿Qué es Saphe Science?",
     heroTitle:
-      "Saphe sCience es una academia que imparte clases de matemáticas y física para alumnos de ESO y Bachillerato.",
+      "Saphe sCience es una academia online especializada en matemáticas y física para ESO y Bachillerato.",
     heroPrimary: "Ver horario",
     heroSecondary: "Pedir informacion",
     proofYears:
@@ -18,7 +18,7 @@ const copy = {
     introEyebrow: "Que es Saphe sCience",
     introTitle: "Entiende, estudia y resuelve.",
     introText:
-      "En Saphe sCience ayudamos a nuestros alumnos a comprender antes que memorizar, desarrollando las herramientas necesarias para resolver problemas con autonomía y afrontar con confianza los retos de la <strong>ESO y el Bachillerato</strong>.",
+      "A través de clases online en grupos reducidos o individuales, cada alumno recibe una atención cercana y adaptada a su nivel, reforzando los conceptos, resolviendo dudas y aprendiendo a enfrentarse a los problemas con seguridad.",
     subjectsEyebrow: "Asignaturas",
     subjectsTitle: "Ciencia sin ruido, paso a paso.",
     mathTitle: "Matematicas",
@@ -83,7 +83,7 @@ const copy = {
     userButton: "My profile",
     heroEyebrow: "What is Saphe Science?",
     heroTitle:
-      "Saphe sCience is an academy for mathematics and physics classes for secondary, sixth-form and High School students.",
+      "Saphe sCience is an online academy specialising in mathematics and physics for secondary and sixth-form students.",
     heroPrimary: "View schedule",
     heroSecondary: "Request info",
     proofYears:
@@ -94,7 +94,7 @@ const copy = {
     introEyebrow: "What is Saphe sCience",
     introTitle: "Understand, study and solve.",
     introText:
-      "At Saphe sCience, we help our students understand before memorising, developing the tools they need to solve problems independently and face the challenges of <strong>secondary and sixth-form studies</strong> with confidence.",
+      "Through online classes in small groups or individually, each student receives close attention adapted to their level, reinforcing concepts, resolving doubts and learning to approach problems with confidence.",
     subjectsEyebrow: "Subjects",
     subjectsTitle: "Science without noise, step by step.",
     mathTitle: "Mathematics",
