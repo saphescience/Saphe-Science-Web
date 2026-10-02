@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Profesor | Saphe sCience</title>
+    <meta
+      name="description"
+      content="Perfil del profesor de Saphe sCience para asignar clases a alumnos."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Playfair+Display:wght@600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css?v=125" />
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="index.html#inicio" aria-label="Ir al inicio de Saphe sCience">
+        <img src="assets/fondo7-integrated.png" alt="Saphe sCience" />
+      </a>
+
+      <nav class="nav" aria-label="Navegacion principal">
+        <a href="index.html#horario">Disponibilidad</a>
+        <a href="index.html#metodo">FAQS</a>
+        <a href="index.html#contacto">Contacto</a>
+      </nav>
+
+      <div class="session-actions">
+        <a class="user-toggle" href="profesor.html" id="teacher-user-label">
+          <span>Profesor</span>
+        </a>
+        <button class="logout-toggle" type="button" data-logout>
+          Salir
+        </button>
+      </div>
+
+      <div class="lang-switch" aria-label="Seleccion de idioma">
+        <button class="lang-toggle" type="button" aria-expanded="false">
+          Idiomas
+        </button>
+      </div>
+    </header>
+
+    <main class="profile-main teacher-main">
+      <section class="profile-hero section teacher-hero">
+        <p class="eyebrow">Perfil del profesor</p>
+        <h1>Profesor</h1>
+        <p>
+          Gestiona alumnos y marca las clases que aparecerán en el calendario del
+          perfil del alumno.
+        </p>
+        <div class="teacher-today" aria-live="polite">
+          <div>
+            <span>Hoy</span>
+            <strong id="teacher-today-date">Fecha de hoy</strong>
+          </div>
+          <div id="teacher-today-list" class="teacher-today-list"></div>
+        </div>
+      </section>
+
+      <section class="section teacher-students">
+        <div class="section-head">
+          <p class="eyebrow">Alumnos</p>
+          <h2>Alumnos inscritos</h2>
+        </div>
+        <div id="teacher-student-list" class="student-card-grid" aria-live="polite"></div>
+      </section>
+
+      <section class="schedule section profile-schedule teacher-schedule" id="profesor-calendario">
+        <div class="section-head">
+          <p class="eyebrow">Mi horario</p>
+          <h2>Clases de todos los alumnos</h2>
+        </div>
+
+        <div class="schedule-shell">
+          <div class="week-controls" aria-label="Seleccion de semana">
+            <button class="week-button" id="teacher-previous-week" type="button">
+              Semana anterior
+            </button>
+            <div class="week-current" aria-live="polite">
+              <span id="teacher-current-month">Mes actual</span>
+              <strong id="teacher-current-week">Semana actual</strong>
+            </div>
+            <button class="week-button" id="teacher-next-week" type="button">
+              Semana siguiente
+            </button>
+          </div>
+
+          <div class="schedule-status" id="teacher-schedule-status" aria-live="polite">
+            Calendario general de lectura: aquí aparecen todas las clases de todos los alumnos.
+          </div>
+
+          <div class="schedule-scroll">
+            <table class="schedule-table">
+              <thead>
+                <tr id="teacher-schedule-head"></tr>
+              </thead>
+              <tbody id="teacher-schedule-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="profile-layout section teacher-layout" id="editar-clases">
+        <article class="profile-card teacher-card">
+          <p class="eyebrow">Menú de edición</p>
+          <h2>Editar clases del alumno</h2>
+          <form class="user-form" id="teacher-form">
+            <label>
+              <span>Nombre del alumno</span>
+              <input name="name" type="text" autocomplete="given-name" placeholder="Mario" required />
+            </label>
+            <label>
+              <span>Apellido</span>
+              <input name="surname" type="text" autocomplete="family-name" />
+            </label>
+            <label>
+              <span>Correo electrónico del alumno</span>
+              <input name="email" type="email" autocomplete="email" />
+            </label>
+            <button class="button button-primary" id="save-student-details" type="button">
+              Guardar alumno
+            </button>
+            <button class="button button-ghost" id="delete-student" type="button" disabled>
+              Eliminar alumno
+            </button>
+            <label>
+              <span>Enlace de la clase</span>
+              <input name="classUrl" type="url" autocomplete="off" />
+            </label>
+            <button class="button button-primary" id="save-class-link" type="button" disabled>
+              Guardar enlace
+            </button>
+            <fieldset class="teacher-access-fields">
+              <legend>Acceso del alumno</legend>
+              <p class="user-form__status" id="student-access-status" aria-live="polite">
+                Sin alumno seleccionado.
+              </p>
+              <label>
+                <span>Usuario del alumno</span>
+                <input name="studentUsername" type="text" autocomplete="off" />
+              </label>
+              <label>
+                <span>Contraseña del alumno</span>
+                <input name="studentPassword" type="password" autocomplete="off" />
+              </label>
+              <button class="button button-primary" id="save-student-access" type="button">
+                Crear acceso
+              </button>
+            </fieldset>
+            <p class="user-form__status" id="teacher-status" aria-live="polite">
+              Guarda o actualiza el acceso del alumno y usa el calendario editable para sus clases.
+            </p>
+          </form>
+        </article>
+
+        <div class="schedule-shell teacher-edit-calendar">
+          <div class="week-controls" aria-label="Seleccion de semana editable">
+            <button class="week-button" id="edit-previous-week" type="button">
+              Semana anterior
+            </button>
+            <div class="week-current" aria-live="polite">
+              <span id="edit-current-month">Mes actual</span>
+              <strong id="edit-current-week">Semana actual</strong>
+            </div>
+            <button class="week-button" id="edit-next-week" type="button">
+              Semana siguiente
+            </button>
+          </div>
+
+          <div class="subject-tabs teacher-edit-subjects" aria-label="Asignatura para editar">
+            <button class="tab is-active" type="button" data-edit-subject="mathEs">
+              Matematicas ES
+            </button>
+            <button class="tab" type="button" data-edit-subject="mathEn">
+              Calculus EN
+            </button>
+            <button class="tab" type="button" data-edit-subject="physicsEs">
+              Fisica ES
+            </button>
+            <button class="tab" type="button" data-edit-subject="physicsEn">
+              Physics EN
+            </button>
+          </div>
+
+          <div class="schedule-status" id="edit-schedule-status" aria-live="polite">
+            Calendario editable: elige alumno, día y horario para guardar una clase.
+          </div>
+
+          <div class="teacher-slot-editor" id="edit-slot-editor">
+            <div>
+              <strong id="edit-slot-title">Añadir clase</strong>
+              <span id="edit-slot-help">Elige un alumno registrado y ajusta el horario exacto.</span>
+            </div>
+            <label>
+              <span>Alumno</span>
+              <select id="edit-student-select" required>
+                <option value="">Selecciona alumno</option>
+              </select>
+            </label>
+            <label>
+              <span>Día</span>
+              <select id="edit-day-select" required>
+                <option value="">Selecciona día</option>
+              </select>
+            </label>
+            <label>
+              <span>Hora de inicio</span>
+              <input id="edit-start-time" type="time" min="15:00" max="22:00" step="60" />
+            </label>
+            <label>
+              <span>Hora de fin</span>
+              <input id="edit-end-time" type="time" min="15:00" max="22:00" step="60" />
+            </label>
+            <label class="teacher-slot-notes">
+              <span>Notas para el alumno</span>
+              <textarea id="edit-class-notes" rows="3" placeholder="Escribe aquí la nota de esta clase"></textarea>
+            </label>
+            <div class="teacher-slot-actions">
+              <button class="button button-primary" id="save-edit-slot" type="button">
+                Guardar clase
+              </button>
+              <button class="button button-ghost" id="remove-edit-slot" type="button">
+                Retirar clase
+              </button>
+            </div>
+          </div>
+
+          <div class="schedule-scroll">
+            <table class="schedule-table">
+              <thead>
+                <tr id="edit-schedule-head"></tr>
+              </thead>
+              <tbody id="edit-schedule-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <span>Saphe sCience</span>
+      <span>Panel del profesor y gestion de clases.</span>
+    </footer>
+
+    <div class="user-modal pdf-modal" id="class-material-modal" hidden>
+      <div class="user-modal__panel pdf-modal__panel" role="dialog" aria-modal="true" aria-labelledby="class-material-title">
+        <button class="user-modal__close" id="class-material-close" type="button" aria-label="Cerrar material">
+          &times;
+        </button>
+        <p class="eyebrow">Material de clase</p>
+        <h2 id="class-material-title">PDF de la clase</h2>
+        <p class="pdf-modal__hint">Vista previa protegida: el material se muestra dentro de la web.</p>
+        <iframe id="class-material-frame" title="Visualizador PDF de la clase"></iframe>
+      </div>
+    </div>
+
+    <script type="module" src="profesor.js?v=125"></script>
+  </body>
+</html>

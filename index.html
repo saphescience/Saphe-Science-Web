@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Saphe sCience | Academia online</title>
+    <meta
+      name="description"
+      content="Saphe sCience ofrece clases online de matematicas y fisica en castellano para ESO y Bachillerato."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Playfair+Display:wght@600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css?v=126" />
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="#inicio" aria-label="Ir al inicio de Saphe sCience">
+        <img src="assets/fondo7-integrated.png" alt="Saphe sCience" />
+      </a>
+
+      <nav class="nav" aria-label="Navegacion principal">
+        <a href="#inicio" data-i18n="navSchedule">Inicio</a>
+        <a href="#metodo" data-i18n="navFaqs">FAQS</a>
+        <a href="#contacto" data-i18n="navContact">Contacto</a>
+      </nav>
+
+      <a class="user-toggle" id="user-toggle" href="perfil.html" data-auth-toggle>
+        <span data-i18n="userButton">Mi perfil</span>
+      </a>
+
+      <div class="lang-switch" aria-label="Seleccion de idioma">
+        <button class="lang-toggle" type="button" aria-expanded="false">
+          Idiomas
+        </button>
+        <div class="lang-menu" hidden>
+          <button class="lang-button is-active" type="button" data-lang="es">Castellano</button>
+          <button class="lang-button" type="button" data-lang="en">English</button>
+          <button class="lang-button" type="button" data-lang="eu">Euskera</button>
+          <button class="lang-button" type="button" data-lang="gl">Galego</button>
+          <button class="lang-button" type="button" data-lang="ca">Catalán</button>
+        </div>
+      </div>
+    </header>
+
+    <main id="inicio">
+      <section class="hero">
+        <div class="hero-statement" aria-hidden="true">
+          <span>Método,</span>
+          <span>Confianza,</span>
+          <span>Trabajo.</span>
+        </div>
+
+        <div class="hero-copy">
+          <p class="eyebrow hero-eyebrow">
+            <svg class="hero-eyebrow-hexagon" viewBox="0 0 28 28" aria-hidden="true" focusable="false">
+              <polygon points="14 1.5 25 8 25 20 14 26.5 3 20 3 8"></polygon>
+            </svg>
+            <span data-i18n="heroEyebrow">¿Qué es Saphe Science?</span>
+          </p>
+          <h1 data-i18n="heroTitle">Saphe sCience es una academia que imparte clases de matemáticas y física para alumnos de ESO y Bachillerato.</h1>
+          <div class="hero-actions">
+            <a class="button button-primary" href="#horario" data-i18n="heroPrimary">
+              Ver horario
+            </a>
+            <a class="button button-ghost" href="#contacto" data-i18n="heroSecondary">
+              Pedir informacion
+            </a>
+          </div>
+        </div>
+
+        <div class="hero-proof" aria-label="Datos principales">
+          <div>
+            <strong>Método,</strong>
+            <span data-i18n="proofYears">Orientado en la eficacia y eficiencia.</span>
+          </div>
+          <div>
+            <strong>Confianza,</strong>
+            <span data-i18n="proofSubjects">En uno mismo, la clave es no rendirse.</span>
+          </div>
+          <div>
+            <strong>Trabajo.</strong>
+            <span data-i18n="proofLanguages">Con esfuerzo en la dirección correcta lograrás lo que te propongas.</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="method section" id="metodo">
+        <div class="section-head">
+          <h2 data-i18n="methodTitle">FAQs</h2>
+        </div>
+
+        <div class="method-grid">
+          <article>
+            <h3 data-i18n="stepOneTitle">¿Cómo empiezo?</h3>
+            <p data-i18n="stepOneText">
+              Ponte en contacto con nosotros y te ayudaremos a elegir el horario
+              que mejor se adapte a ti.
+            </p>
+          </article>
+          <article>
+            <h3 data-i18n="stepTwoTitle">¿Dónde se imparten las clases?</h3>
+            <p data-i18n="stepTwoText">
+              Una vez creado el perfil del alumn@, aparecerá un enlace para
+              unirte a la clase a través del correo electrónico.
+            </p>
+          </article>
+          <article>
+            <h3 data-i18n="stepThreeTitle">¿Seguimiento?</h3>
+            <p data-i18n="stepThreeText">
+              El alumn@ tendrá acceso a los pdf de la clase, un horario
+              actualizado de las tareas y las notas para que el seguimiento sea
+              el adecuado.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section class="intro section">
+        <p class="eyebrow" data-i18n="introEyebrow">Que es Saphe sCience</p>
+        <div class="intro-grid">
+          <h2 data-i18n="introTitle">
+            Entiende, estudia y resuelve.
+          </h2>
+          <p data-i18n="introText" data-i18n-html="true">
+            En Saphe sCience ayudamos a nuestros alumnos a comprender antes que
+            memorizar, desarrollando las herramientas necesarias para resolver
+            problemas con autonomía y afrontar con confianza los retos de la
+            <strong>ESO y el Bachillerato</strong>.
+          </p>
+        </div>
+      </section>
+
+      <section class="schedule section" id="horario">
+        <div class="section-head">
+          <p class="eyebrow" data-i18n="scheduleEyebrow">Disponibilidad</p>
+          <h2 data-i18n="scheduleTitle">Reserva una clase</h2>
+        </div>
+
+        <div class="availability-panel">
+          <p>
+            <span data-i18n="availabilityIntro">
+              Si quieres informacion sobre disponibilidad, mandanos un mensaje al
+            </span>
+            <a class="contact-inline contact-inline--whatsapp" href="https://wa.me/34660743739" target="_blank" rel="noopener" aria-label="Enviar WhatsApp al 660 74 37 39">
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d="M12.04 3.5a8.45 8.45 0 0 0-7.18 12.9L4 20.5l4.2-1.1a8.45 8.45 0 1 0 3.84-15.9Zm0 1.7a6.75 6.75 0 0 1 5.73 10.32 6.76 6.76 0 0 1-8.04 2.45l-.3-.14-2.78.73.74-2.7-.16-.32A6.75 6.75 0 0 1 12.04 5.2Zm-3.3 3.28c-.14 0-.37.05-.57.27-.2.22-.75.73-.75 1.78 0 1.04.77 2.06.87 2.2.1.14 1.48 2.36 3.66 3.2 1.81.72 2.18.58 2.57.54.4-.04 1.28-.52 1.46-1.02.18-.5.18-.94.13-1.03-.06-.1-.2-.15-.42-.26-.23-.11-1.32-.65-1.52-.72-.2-.08-.35-.11-.5.11-.14.22-.57.72-.7.86-.13.15-.26.17-.48.06-.23-.11-.96-.35-1.82-1.12-.67-.6-1.13-1.35-1.26-1.57-.13-.23-.01-.35.1-.46.1-.1.22-.26.33-.39.11-.13.15-.22.22-.37.08-.15.04-.28-.02-.39-.06-.11-.5-1.21-.69-1.66-.18-.44-.37-.38-.5-.38h-.42Z"></path>
+              </svg>
+              <span data-i18n="availabilityPhone">+34 660 74 37 39</span>
+            </a>
+            <span data-i18n="availabilityMiddle">o escribenos un correo a</span>
+            <a class="contact-inline contact-inline--mail" href="mailto:saphescience@gmail.com" aria-label="Enviar correo a saphescience@gmail.com">
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d="M4.5 5.75h15A2.25 2.25 0 0 1 21.75 8v8a2.25 2.25 0 0 1-2.25 2.25h-15A2.25 2.25 0 0 1 2.25 16V8A2.25 2.25 0 0 1 4.5 5.75Zm0 1.5a.75.75 0 0 0-.75.75v.37l8.25 4.95 8.25-4.95V8a.75.75 0 0 0-.75-.75h-15Zm15 9.5a.75.75 0 0 0 .75-.75v-5.88l-7.86 4.72a.75.75 0 0 1-.78 0l-7.86-4.72V16c0 .41.34.75.75.75h15Z"></path>
+              </svg>
+              <span>saphescience@gmail.com</span>
+            </a>
+          </p>
+        </div>
+      </section>
+
+      <section class="contact section" id="contacto">
+        <div>
+          <p class="eyebrow" data-i18n="contactEyebrow">Contacto</p>
+          <h2 data-i18n="contactTitle">Cuéntanos curso, asignatura y objetivo.</h2>
+          <p data-i18n="contactText">
+            Te orientamos con el mejor punto de partida y buscamos un hueco que
+            encaje con el alumn@.
+          </p>
+        </div>
+        <a class="button button-primary" href="mailto:saphescience@gmail.com">
+          saphescience@gmail.com
+        </a>
+      </section>
+    </main>
+
+    <div class="booking-modal" id="booking-modal" hidden>
+      <div class="booking-modal__panel" role="dialog" aria-modal="true" aria-labelledby="booking-title">
+        <button class="booking-modal__close" type="button" aria-label="Cerrar formulario">
+          &times;
+        </button>
+        <p class="eyebrow" data-i18n="bookingEyebrow">Inscripcion</p>
+        <h2 id="booking-title" data-i18n="bookingTitle">Inscribirse a la clase</h2>
+        <p class="booking-modal__slot" id="booking-slot"></p>
+        <form class="booking-form" id="booking-form">
+          <label>
+            <span data-i18n="bookingName">Nombre</span>
+            <input name="name" type="text" autocomplete="given-name" required />
+          </label>
+          <label>
+            <span data-i18n="bookingSurname">Apellido</span>
+            <input name="surname" type="text" autocomplete="family-name" required />
+          </label>
+          <label>
+            <span data-i18n="bookingEmail">Correo electronico</span>
+            <input name="email" type="email" autocomplete="email" required />
+          </label>
+          <button class="button button-primary" type="submit" data-i18n="bookingSubmit">
+            Enviar inscripcion
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <div class="user-modal auth-modal" id="auth-modal" hidden>
+      <div class="user-modal__panel auth-modal__panel" role="dialog" aria-modal="true" aria-labelledby="auth-title">
+        <button class="user-modal__close" type="button" aria-label="Cerrar acceso">
+          &times;
+        </button>
+
+        <section class="auth-panel" data-auth-panel="login">
+          <p class="eyebrow">Mi usuario</p>
+          <h2 id="auth-title">Acceso</h2>
+          <form class="user-form" id="auth-login-form">
+            <label>
+              <span>Correo electrónico</span>
+              <input name="email" type="email" autocomplete="email" required />
+            </label>
+            <label>
+              <span>Contraseña</span>
+              <input name="password" type="password" autocomplete="current-password" required />
+            </label>
+            <p class="user-form__status auth-status" id="auth-login-status" aria-live="polite"></p>
+            <button class="button button-primary" type="submit">Entrar</button>
+          </form>
+        </section>
+
+        <section class="auth-panel" data-auth-panel="signup" hidden>
+          <p class="eyebrow">Crear una cuenta</p>
+          <h2>Registro</h2>
+          <form class="user-form" id="auth-signup-form">
+            <label>
+              <span>Correo electrónico</span>
+              <input name="email" type="email" autocomplete="email" required />
+            </label>
+            <label>
+              <span>Nombre de usuario</span>
+              <input name="username" type="text" autocomplete="username" required />
+            </label>
+            <label>
+              <span>Contraseña</span>
+              <input name="password" type="password" autocomplete="new-password" required />
+            </label>
+            <label>
+              <span>Repetir contraseña</span>
+              <input name="confirmPassword" type="password" autocomplete="new-password" required />
+            </label>
+            <p class="user-form__status auth-status" id="auth-signup-status" aria-live="polite"></p>
+            <button class="button button-primary" type="submit">Aceptar</button>
+          </form>
+          <div class="auth-switch">
+            <span>¿Ya tienes cuenta?</span>
+            <button type="button" data-auth-view="login">Entrar</button>
+          </div>
+        </section>
+
+        <section class="auth-panel" data-auth-panel="forgot" hidden>
+          <p class="eyebrow">Recuperar contraseña</p>
+          <h2>Olvidé mi contraseña</h2>
+          <form class="user-form" id="auth-forgot-form">
+            <label>
+              <span>Correo electrónico</span>
+              <input name="email" type="email" autocomplete="email" required />
+            </label>
+            <p class="user-form__status auth-status" id="auth-forgot-status" aria-live="polite"></p>
+            <button class="button button-primary" type="submit">Enviar correo</button>
+          </form>
+          <div class="auth-switch">
+            <span>¿Ya tienes cuenta?</span>
+            <button type="button" data-auth-view="login">Entrar</button>
+          </div>
+        </section>
+
+        <section class="auth-panel" data-auth-panel="reset" hidden>
+          <p class="eyebrow">Nueva contraseña</p>
+          <h2>Crear nueva contraseña</h2>
+          <form class="user-form" id="auth-reset-form">
+            <label>
+              <span>Correo original del usuario</span>
+              <input name="email" type="email" readonly required />
+            </label>
+            <label>
+              <span>Nueva contraseña</span>
+              <input name="password" type="password" autocomplete="new-password" required />
+            </label>
+            <label>
+              <span>Repetir nueva contraseña</span>
+              <input name="confirmPassword" type="password" autocomplete="new-password" required />
+            </label>
+            <p class="user-form__status auth-status" id="auth-reset-status" aria-live="polite"></p>
+            <button class="button button-primary" type="submit">Aceptar</button>
+          </form>
+          <div class="auth-switch">
+            <span>¿Ya tienes cuenta?</span>
+            <button type="button" data-auth-view="login">Entrar</button>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <footer class="footer">
+      <span>Saphe sCience</span>
+      <span data-i18n="footerText">Matematicas y fisica online en castellano.</span>
+    </footer>
+
+    <script src="script.js?v=129"></script>
+    <script type="module" src="auth.js?v=130"></script>
+  </body>
+</html>

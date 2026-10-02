@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mi usuario | Saphe sCience</title>
+    <meta
+      name="description"
+      content="Perfil de alumno de Saphe sCience para guardar datos e inscribirse a clases."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Playfair+Display:wght@600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css?v=125" />
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="index.html#inicio" aria-label="Ir al inicio de Saphe sCience">
+        <img src="assets/fondo7-integrated.png" alt="Saphe sCience" />
+      </a>
+
+      <nav class="nav" aria-label="Navegacion principal">
+        <a href="index.html#horario">Disponibilidad</a>
+        <a href="index.html#metodo">FAQS</a>
+        <a href="index.html#contacto">Contacto</a>
+      </nav>
+
+      <div class="session-actions">
+        <a class="user-toggle is-active" id="profile-user-label" href="perfil.html" data-auth-toggle>
+          <span>Mi usuario</span>
+        </a>
+        <button class="logout-toggle" type="button" data-logout>
+          Salir
+        </button>
+      </div>
+
+      <div class="lang-switch" aria-label="Seleccion de idioma">
+        <button class="lang-toggle" type="button" aria-expanded="false">
+          Idiomas
+        </button>
+      </div>
+    </header>
+
+    <main class="profile-main">
+      <section class="profile-hero section">
+        <p class="eyebrow">Perfil del alumno</p>
+        <h1 id="profile-heading">Mi usuario</h1>
+        <div class="student-next-class" id="student-next-class" aria-live="polite"></div>
+      </section>
+
+      <section class="schedule section profile-schedule" id="inscripcion">
+        <div class="section-head">
+          <p class="eyebrow">Calendario</p>
+          <h2>Mi calendario de clases:</h2>
+        </div>
+
+        <div class="schedule-shell">
+          <div class="week-controls" aria-label="Seleccion de semana">
+            <button class="week-button" id="previous-week" type="button">
+              Semana anterior
+            </button>
+            <div class="week-current" aria-live="polite">
+              <span id="current-month">Mes actual</span>
+              <strong id="current-week">Semana actual</strong>
+            </div>
+            <button class="week-button" id="next-week" type="button">
+              Semana siguiente
+            </button>
+          </div>
+
+          <div class="schedule-status" id="profile-schedule-status" aria-live="polite">
+            Calendario de lectura: tus clases se muestran marcadas por el profesor.
+          </div>
+
+          <div class="schedule-scroll">
+            <table class="schedule-table">
+              <thead>
+                <tr id="profile-schedule-head"></tr>
+              </thead>
+              <tbody id="profile-schedule-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="profile-layout section student-profile-details">
+        <article class="profile-summary past-classes-card">
+          <p class="eyebrow">Clases dadas</p>
+          <h2>Temario dado</h2>
+          <div id="booking-list" class="booking-list" aria-live="polite"></div>
+        </article>
+
+        <aside class="profile-card class-link-card">
+          <p class="eyebrow">Mi clase</p>
+          <h2>Espacio para mi clase</h2>
+          <p>Enlace para acceder a tu clase online.</p>
+          <a class="button button-primary class-link" id="student-class-link" href="#" aria-disabled="true">
+            Enlace pendiente
+          </a>
+        </aside>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <span>Saphe sCience</span>
+      <span>Perfil de alumno y calendario de inscripción.</span>
+    </footer>
+
+    <div class="user-modal note-modal" id="class-note-modal" hidden>
+      <div class="user-modal__panel note-modal__panel" role="dialog" aria-modal="true" aria-labelledby="class-note-title">
+        <button class="user-modal__close" id="class-note-close" type="button" aria-label="Cerrar nota">
+          &times;
+        </button>
+        <p class="eyebrow">Nota del profesor</p>
+        <h2 id="class-note-title">Clase</h2>
+        <div class="booking-modal__slot" id="class-note-time"></div>
+        <p class="class-note-text" id="class-note-text"></p>
+        <div class="student-material-inline" id="class-note-material" hidden></div>
+      </div>
+    </div>
+
+    <div class="user-modal pdf-modal" id="class-material-modal" hidden>
+      <div class="user-modal__panel pdf-modal__panel" role="dialog" aria-modal="true" aria-labelledby="class-material-title">
+        <button class="user-modal__close" id="class-material-close" type="button" aria-label="Cerrar material">
+          &times;
+        </button>
+        <p class="eyebrow">Material de clase</p>
+        <h2 id="class-material-title">PDF de la clase</h2>
+        <p class="pdf-modal__hint">Vista previa del material compartido por el profesor.</p>
+        <iframe id="class-material-frame" title="Visualizador PDF de la clase"></iframe>
+      </div>
+    </div>
+
+    <div class="user-modal auth-modal" id="auth-modal" hidden>
+      <div class="user-modal__panel auth-modal__panel" role="dialog" aria-modal="true" aria-labelledby="auth-title">
+        <button class="user-modal__close" type="button" aria-label="Cerrar acceso">
+          &times;
+        </button>
+
+        <section class="auth-panel" data-auth-panel="login">
+          <p class="eyebrow">Mi usuario</p>
+          <h2 id="auth-title">Acceso</h2>
+          <form class="user-form" id="auth-login-form">
+            <label>
+              <span>Correo electrónico</span>
+              <input name="email" type="email" autocomplete="email" required />
+            </label>
+            <label>
+              <span>Contraseña</span>
+              <input name="password" type="password" autocomplete="current-password" required />
+            </label>
+            <p class="user-form__status auth-status" id="auth-login-status" aria-live="polite"></p>
+            <button class="button button-primary" type="submit">Entrar</button>
+          </form>
+        </section>
+
+        <section class="auth-panel" data-auth-panel="signup" hidden>
+          <p class="eyebrow">Crear una cuenta</p>
+          <h2>Registro</h2>
+          <form class="user-form" id="auth-signup-form">
+            <label>
+              <span>Correo electrónico</span>
+              <input name="email" type="email" autocomplete="email" required />
+            </label>
+            <label>
+              <span>Nombre de usuario</span>
+              <input name="username" type="text" autocomplete="username" required />
+            </label>
+            <label>
+              <span>Contraseña</span>
+              <input name="password" type="password" autocomplete="new-password" required />
+            </label>
+            <label>
+              <span>Repetir contraseña</span>
+              <input name="confirmPassword" type="password" autocomplete="new-password" required />
+            </label>
+            <p class="user-form__status auth-status" id="auth-signup-status" aria-live="polite"></p>
+            <button class="button button-primary" type="submit">Aceptar</button>
+          </form>
+          <div class="auth-switch">
+            <span>¿Ya tienes cuenta?</span>
+            <button type="button" data-auth-view="login">Entrar</button>
+          </div>
+        </section>
+
+        <section class="auth-panel" data-auth-panel="forgot" hidden>
+          <p class="eyebrow">Recuperar contraseña</p>
+          <h2>Olvidé mi contraseña</h2>
+          <form class="user-form" id="auth-forgot-form">
+            <label>
+              <span>Correo electrónico</span>
+              <input name="email" type="email" autocomplete="email" required />
+            </label>
+            <p class="user-form__status auth-status" id="auth-forgot-status" aria-live="polite"></p>
+            <button class="button button-primary" type="submit">Enviar correo</button>
+          </form>
+          <div class="auth-switch">
+            <span>¿Ya tienes cuenta?</span>
+            <button type="button" data-auth-view="login">Entrar</button>
+          </div>
+        </section>
+
+        <section class="auth-panel" data-auth-panel="reset" hidden>
+          <p class="eyebrow">Nueva contraseña</p>
+          <h2>Crear nueva contraseña</h2>
+          <form class="user-form" id="auth-reset-form">
+            <label>
+              <span>Correo original del usuario</span>
+              <input name="email" type="email" readonly required />
+            </label>
+            <label>
+              <span>Nueva contraseña</span>
+              <input name="password" type="password" autocomplete="new-password" required />
+            </label>
+            <label>
+              <span>Repetir nueva contraseña</span>
+              <input name="confirmPassword" type="password" autocomplete="new-password" required />
+            </label>
+            <p class="user-form__status auth-status" id="auth-reset-status" aria-live="polite"></p>
+            <button class="button button-primary" type="submit">Aceptar</button>
+          </form>
+          <div class="auth-switch">
+            <span>¿Ya tienes cuenta?</span>
+            <button type="button" data-auth-view="login">Entrar</button>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <script type="module" src="perfil.js?v=124"></script>
+    <script type="module" src="auth.js?v=130"></script>
+  </body>
+</html>
