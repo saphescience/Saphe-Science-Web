@@ -308,6 +308,36 @@ h3 {
   backdrop-filter: blur(10px);
 }
 
+.hero-whatsapp {
+  position: absolute;
+  top: clamp(14px, 2vw, 24px);
+  right: clamp(14px, 2vw, 24px);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 12px;
+  color: var(--cream);
+  background: rgba(246, 247, 235, 0.08);
+  border: 1px solid rgba(246, 247, 235, 0.28);
+  font-size: 0.9rem;
+  font-weight: 900;
+  line-height: 1;
+  text-decoration: none;
+}
+
+.hero-whatsapp svg {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 auto;
+  fill: currentColor;
+}
+
+.hero-whatsapp:hover,
+.hero-whatsapp:focus-visible {
+  color: var(--sun);
+  border-color: var(--sun);
+}
+
 .eyebrow {
   color: var(--cream);
   font-size: 0.82rem;
@@ -1769,6 +1799,11 @@ body.modal-open {
 
   .hero-copy h1 {
     font-size: clamp(3rem, 14vw, 4.6rem);
+  }
+
+  .hero-whatsapp {
+    position: static;
+    margin-bottom: 2px;
   }
 
   .hero-actions,

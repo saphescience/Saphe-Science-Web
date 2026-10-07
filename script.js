@@ -38,6 +38,9 @@ const copy = {
     stepThreeTitle: "¿Seguimiento?",
     stepThreeText:
       "El alumno tendrá acceso a los pdf de la clase, un horario actualizado de las tareas y las notas para que el seguimiento sea el adecuado.",
+    stepFourTitle: "¿Dudas?",
+    stepFourText:
+      "Puedes enviar un what's app en cualquier momento para resolver dudas fuera del horario de la clase al numero +34 660 74 37 39.",
     scheduleEyebrow: "Disponibilidad",
     scheduleTitle: "Contacto",
     availabilityIntro:
@@ -114,6 +117,9 @@ const copy = {
     stepThreeTitle: "Tracking?",
     stepThreeText:
       "The student will have access to the class PDFs, an updated task schedule and the notes so the follow-up is appropriate.",
+    stepFourTitle: "Questions?",
+    stepFourText:
+      "You can send a WhatsApp message at any time to resolve questions outside class time at +34 660 74 37 39.",
     scheduleEyebrow: "Availability",
     scheduleTitle: "Contact",
     availabilityIntro:
