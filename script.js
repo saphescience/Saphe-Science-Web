@@ -7,7 +7,7 @@ const copy = {
     userButton: "Mi perfil",
     heroEyebrow: "¿Qué es Saphe Science?",
     heroTitle:
-      "Saphe sCience es una academia online especializada en matemáticas y física para ESO y Bachillerato.",
+      "Saphe sCience es una academia con clases presenciales y online, especializada en matemáticas y física para ESO y Bachillerato.",
     heroPrimary: "Reserva una clase",
     heroSecondary: "",
     proofYears:
@@ -86,7 +86,7 @@ const copy = {
     userButton: "My profile",
     heroEyebrow: "What is Saphe Science?",
     heroTitle:
-      "Saphe sCience is an online academy specialising in mathematics and physics for secondary and sixth-form students.",
+      "Saphe sCience is an academy with in-person and online classes, specialising in mathematics and physics for secondary and sixth-form students.",
     heroPrimary: "Book a class",
     heroSecondary: "",
     proofYears:
