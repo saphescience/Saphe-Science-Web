@@ -3,26 +3,26 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Saphe sCience | Academia online</title>
+    <title data-i18n="ui.sapheScienceOnlineAcademy">Saphe sCience | Academia online</title>
     <meta
       name="description"
       content="Saphe sCience ofrece clases online de matematicas y fisica en castellano para ESO y Bachillerato."
-    />
+     data-i18n-content="ui.sapheScienceOffersOnlineMathematicsAndPhysicsClassesInSpanishForESOSecondaryEducationAndBachilleratoUpperSecondaryEducation"/>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Playfair+Display:wght@600;700;800&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=126" />
+    <link rel="stylesheet" href="styles.css?v=131" />
   </head>
   <body>
     <header class="topbar">
-      <a class="brand" href="#inicio" aria-label="Ir al inicio de Saphe sCience">
+      <a class="brand" href="#inicio" aria-label="Ir al inicio de Saphe sCience" data-i18n-aria-label="ui.goToTheSapheScienceHomePage">
         <img src="assets/fondo7-integrated.png" alt="Saphe sCience" />
       </a>
 
-      <nav class="nav" aria-label="Navegacion principal">
+      <nav class="nav" aria-label="Navegacion principal" data-i18n-aria-label="ui.mainNavigation">
         <a href="#inicio" data-i18n="navSchedule">Inicio</a>
         <a href="#metodo" data-i18n="navFaqs">FAQS</a>
         <a href="#contacto" data-i18n="navContact">Contacto</a>
@@ -32,12 +32,12 @@
         <span data-i18n="userButton">Mi perfil</span>
       </a>
 
-      <div class="lang-switch" aria-label="Seleccion de idioma">
-        <button class="lang-toggle" type="button" aria-expanded="false">
+      <div class="lang-switch" aria-label="Seleccion de idioma" data-i18n-aria-label="ui.languageSelection">
+        <button class="lang-toggle" type="button" aria-expanded="false" data-i18n="ui.languages">
           Idiomas
         </button>
         <div class="lang-menu" hidden>
-          <button class="lang-button is-active" type="button" data-lang="es">Castellano</button>
+          <button class="lang-button is-active" type="button" data-lang="es" data-i18n="ui.spanish">Castellano</button>
           <button class="lang-button" type="button" data-lang="en">English</button>
         </div>
       </div>
@@ -46,17 +46,17 @@
     <main id="inicio">
       <section class="hero">
         <div class="hero-statement" aria-hidden="true">
-          <span>Método,</span>
-          <span>Confianza,</span>
-          <span>Trabajo.</span>
+          <span data-i18n="ui.method">Método,</span>
+          <span data-i18n="ui.confidence">Confianza,</span>
+          <span data-i18n="ui.work">Trabajo.</span>
         </div>
 
         <div class="hero-copy">
-          <a class="hero-whatsapp" href="https://wa.me/34660743739" target="_blank" rel="noopener" aria-label="Enviar WhatsApp al 660 74 37 39">
+          <a class="hero-whatsapp" href="https://wa.me/34660743739" target="_blank" rel="noopener" aria-label="Enviar WhatsApp al 660 74 37 39" data-i18n-aria-label="ui.sendAWhatsAppMessageTo660743739">
             <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
               <path d="M12.04 3.5a8.45 8.45 0 0 0-7.18 12.9L4 20.5l4.2-1.1a8.45 8.45 0 1 0 3.84-15.9Zm0 1.7a6.75 6.75 0 0 1 5.73 10.32 6.76 6.76 0 0 1-8.04 2.45l-.3-.14-2.78.73.74-2.7-.16-.32A6.75 6.75 0 0 1 12.04 5.2Zm-3.3 3.28c-.14 0-.37.05-.57.27-.2.22-.75.73-.75 1.78 0 1.04.77 2.06.87 2.2.1.14 1.48 2.36 3.66 3.2 1.81.72 2.18.58 2.57.54.4-.04 1.28-.52 1.46-1.02.18-.5.18-.94.13-1.03-.06-.1-.2-.15-.42-.26-.23-.11-1.32-.65-1.52-.72-.2-.08-.35-.11-.5.11-.14.22-.57.72-.7.86-.13.15-.26.17-.48.06-.23-.11-.96-.35-1.82-1.12-.67-.6-1.13-1.35-1.26-1.57-.13-.23-.01-.35.1-.46.1-.1.22-.26.33-.39.11-.13.15-.22.22-.37.08-.15.04-.28-.02-.39-.06-.11-.5-1.21-.69-1.66-.18-.44-.37-.38-.5-.38h-.42Z"></path>
             </svg>
-            <span>+34 660 74 37 39</span>
+            <span data-i18n="availabilityPhone">+34 660 74 37 39</span>
           </a>
           <p class="eyebrow hero-eyebrow">
             <svg class="hero-eyebrow-hexagon" viewBox="0 0 28 28" aria-hidden="true" focusable="false">
@@ -64,7 +64,7 @@
             </svg>
             <span data-i18n="heroEyebrow">¿Qué es Saphe Science?</span>
           </p>
-          <h1 data-i18n="heroTitle">Saphe sCience es una academia con clases presenciales y online, especializada en matemáticas y física para ESO y Bachillerato.</h1>
+          <h1 data-i18n="heroTitle">Saphe sCience es una academia con clases presenciales y online, especializada en matemáticas y física en castellano e inglés, para alumnos de ESO, Bachillerato y Bachillerato Internacional (IB).</h1>
           <div class="hero-actions">
             <a class="button button-primary" href="#horario" data-i18n="heroPrimary">
               Reserva una clase
@@ -72,17 +72,17 @@
           </div>
         </div>
 
-        <div class="hero-proof" aria-label="Datos principales">
+        <div class="hero-proof" aria-label="Datos principales" data-i18n-aria-label="ui.keyInformation">
           <div>
-            <strong>Método,</strong>
+            <strong data-i18n="ui.method">Método,</strong>
             <span data-i18n="proofYears">Orientado en la eficacia y eficiencia.</span>
           </div>
           <div>
-            <strong>Confianza,</strong>
+            <strong data-i18n="ui.confidence">Confianza,</strong>
             <span data-i18n="proofSubjects">En uno mismo, la clave es no rendirse.</span>
           </div>
           <div>
-            <strong>Trabajo.</strong>
+            <strong data-i18n="ui.work">Trabajo.</strong>
             <span data-i18n="proofLanguages">Con esfuerzo en la dirección correcta lograrás lo que te propongas.</span>
           </div>
         </div>
@@ -149,14 +149,14 @@
             <span data-i18n="availabilityIntro">
               Si quieres informacion sobre disponibilidad, mandanos un mensaje al
             </span>
-            <a class="contact-inline contact-inline--whatsapp" href="https://wa.me/34660743739" target="_blank" rel="noopener" aria-label="Enviar WhatsApp al 660 74 37 39">
+            <a class="contact-inline contact-inline--whatsapp" href="https://wa.me/34660743739" target="_blank" rel="noopener" aria-label="Enviar WhatsApp al 660 74 37 39" data-i18n-aria-label="ui.sendAWhatsAppMessageTo660743739">
               <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
                 <path d="M12.04 3.5a8.45 8.45 0 0 0-7.18 12.9L4 20.5l4.2-1.1a8.45 8.45 0 1 0 3.84-15.9Zm0 1.7a6.75 6.75 0 0 1 5.73 10.32 6.76 6.76 0 0 1-8.04 2.45l-.3-.14-2.78.73.74-2.7-.16-.32A6.75 6.75 0 0 1 12.04 5.2Zm-3.3 3.28c-.14 0-.37.05-.57.27-.2.22-.75.73-.75 1.78 0 1.04.77 2.06.87 2.2.1.14 1.48 2.36 3.66 3.2 1.81.72 2.18.58 2.57.54.4-.04 1.28-.52 1.46-1.02.18-.5.18-.94.13-1.03-.06-.1-.2-.15-.42-.26-.23-.11-1.32-.65-1.52-.72-.2-.08-.35-.11-.5.11-.14.22-.57.72-.7.86-.13.15-.26.17-.48.06-.23-.11-.96-.35-1.82-1.12-.67-.6-1.13-1.35-1.26-1.57-.13-.23-.01-.35.1-.46.1-.1.22-.26.33-.39.11-.13.15-.22.22-.37.08-.15.04-.28-.02-.39-.06-.11-.5-1.21-.69-1.66-.18-.44-.37-.38-.5-.38h-.42Z"></path>
               </svg>
               <span data-i18n="availabilityPhone">+34 660 74 37 39</span>
             </a>
             <span data-i18n="availabilityMiddle">o escribenos un correo a</span>
-            <a class="contact-inline contact-inline--mail" href="mailto:info@saphescience.com" aria-label="Enviar correo a info@saphescience.com">
+            <a class="contact-inline contact-inline--mail" href="mailto:info@saphescience.com" aria-label="Enviar correo a info@saphescience.com" data-i18n-aria-label="ui.sendAnEmailToInfoSaphescienceCom">
               <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
                 <path d="M4.5 5.75h15A2.25 2.25 0 0 1 21.75 8v8a2.25 2.25 0 0 1-2.25 2.25h-15A2.25 2.25 0 0 1 2.25 16V8A2.25 2.25 0 0 1 4.5 5.75Zm0 1.5a.75.75 0 0 0-.75.75v.37l8.25 4.95 8.25-4.95V8a.75.75 0 0 0-.75-.75h-15Zm15 9.5a.75.75 0 0 0 .75-.75v-5.88l-7.86 4.72a.75.75 0 0 1-.78 0l-7.86-4.72V16c0 .41.34.75.75.75h15Z"></path>
               </svg>
@@ -183,7 +183,7 @@
 
     <div class="booking-modal" id="booking-modal" hidden>
       <div class="booking-modal__panel" role="dialog" aria-modal="true" aria-labelledby="booking-title">
-        <button class="booking-modal__close" type="button" aria-label="Cerrar formulario">
+        <button class="booking-modal__close" type="button" aria-label="Cerrar formulario" data-i18n-aria-label="ui.closeForm">
           &times;
         </button>
         <p class="eyebrow" data-i18n="bookingEyebrow">Inscripcion</p>
@@ -211,95 +211,95 @@
 
     <div class="user-modal auth-modal" id="auth-modal" hidden>
       <div class="user-modal__panel auth-modal__panel" role="dialog" aria-modal="true" aria-labelledby="auth-title">
-        <button class="user-modal__close" type="button" aria-label="Cerrar acceso">
+        <button class="user-modal__close" type="button" aria-label="Cerrar acceso" data-i18n-aria-label="ui.closeSignInDialog">
           &times;
         </button>
 
         <section class="auth-panel" data-auth-panel="login">
-          <p class="eyebrow">Mi usuario</p>
-          <h2 id="auth-title">Acceso</h2>
+          <p class="eyebrow" data-i18n="profileTitle">Mi usuario</p>
+          <h2 id="auth-title" data-i18n="ui.signIn">Acceso</h2>
           <form class="user-form" id="auth-login-form">
             <label>
-              <span>Correo electrónico</span>
+              <span data-i18n="ui.email">Correo electrónico</span>
               <input name="email" type="email" autocomplete="email" required />
             </label>
             <label>
-              <span>Contraseña</span>
+              <span data-i18n="ui.password">Contraseña</span>
               <input name="password" type="password" autocomplete="current-password" required />
             </label>
             <p class="user-form__status auth-status" id="auth-login-status" aria-live="polite"></p>
-            <button class="button button-primary" type="submit">Entrar</button>
+            <button class="button button-primary" type="submit" data-i18n="ui.signIn8515">Entrar</button>
           </form>
         </section>
 
         <section class="auth-panel" data-auth-panel="signup" hidden>
-          <p class="eyebrow">Crear una cuenta</p>
-          <h2>Registro</h2>
+          <p class="eyebrow" data-i18n="ui.createAnAccount">Crear una cuenta</p>
+          <h2 data-i18n="ui.signUp">Registro</h2>
           <form class="user-form" id="auth-signup-form">
             <label>
-              <span>Correo electrónico</span>
+              <span data-i18n="ui.email">Correo electrónico</span>
               <input name="email" type="email" autocomplete="email" required />
             </label>
             <label>
-              <span>Nombre de usuario</span>
+              <span data-i18n="ui.username">Nombre de usuario</span>
               <input name="username" type="text" autocomplete="username" required />
             </label>
             <label>
-              <span>Contraseña</span>
+              <span data-i18n="ui.password">Contraseña</span>
               <input name="password" type="password" autocomplete="new-password" required />
             </label>
             <label>
-              <span>Repetir contraseña</span>
+              <span data-i18n="ui.confirmPassword">Repetir contraseña</span>
               <input name="confirmPassword" type="password" autocomplete="new-password" required />
             </label>
             <p class="user-form__status auth-status" id="auth-signup-status" aria-live="polite"></p>
-            <button class="button button-primary" type="submit">Aceptar</button>
+            <button class="button button-primary" type="submit" data-i18n="ui.confirm">Aceptar</button>
           </form>
           <div class="auth-switch">
-            <span>¿Ya tienes cuenta?</span>
-            <button type="button" data-auth-view="login">Entrar</button>
+            <span data-i18n="ui.alreadyHaveAnAccount">¿Ya tienes cuenta?</span>
+            <button type="button" data-auth-view="login" data-i18n="ui.signIn8515">Entrar</button>
           </div>
         </section>
 
         <section class="auth-panel" data-auth-panel="forgot" hidden>
-          <p class="eyebrow">Recuperar contraseña</p>
-          <h2>Olvidé mi contraseña</h2>
+          <p class="eyebrow" data-i18n="ui.resetPassword">Recuperar contraseña</p>
+          <h2 data-i18n="ui.forgotPassword">Olvidé mi contraseña</h2>
           <form class="user-form" id="auth-forgot-form">
             <label>
-              <span>Correo electrónico</span>
+              <span data-i18n="ui.email">Correo electrónico</span>
               <input name="email" type="email" autocomplete="email" required />
             </label>
             <p class="user-form__status auth-status" id="auth-forgot-status" aria-live="polite"></p>
-            <button class="button button-primary" type="submit">Enviar correo</button>
+            <button class="button button-primary" type="submit" data-i18n="ui.sendEmail">Enviar correo</button>
           </form>
           <div class="auth-switch">
-            <span>¿Ya tienes cuenta?</span>
-            <button type="button" data-auth-view="login">Entrar</button>
+            <span data-i18n="ui.alreadyHaveAnAccount">¿Ya tienes cuenta?</span>
+            <button type="button" data-auth-view="login" data-i18n="ui.signIn8515">Entrar</button>
           </div>
         </section>
 
         <section class="auth-panel" data-auth-panel="reset" hidden>
-          <p class="eyebrow">Nueva contraseña</p>
-          <h2>Crear nueva contraseña</h2>
+          <p class="eyebrow" data-i18n="ui.newPassword">Nueva contraseña</p>
+          <h2 data-i18n="ui.setANewPassword">Crear nueva contraseña</h2>
           <form class="user-form" id="auth-reset-form">
             <label>
-              <span>Correo original del usuario</span>
+              <span data-i18n="ui.accountEmail">Correo original del usuario</span>
               <input name="email" type="email" readonly required />
             </label>
             <label>
-              <span>Nueva contraseña</span>
+              <span data-i18n="ui.newPassword">Nueva contraseña</span>
               <input name="password" type="password" autocomplete="new-password" required />
             </label>
             <label>
-              <span>Repetir nueva contraseña</span>
+              <span data-i18n="ui.confirmNewPassword">Repetir nueva contraseña</span>
               <input name="confirmPassword" type="password" autocomplete="new-password" required />
             </label>
             <p class="user-form__status auth-status" id="auth-reset-status" aria-live="polite"></p>
-            <button class="button button-primary" type="submit">Aceptar</button>
+            <button class="button button-primary" type="submit" data-i18n="ui.confirm">Aceptar</button>
           </form>
           <div class="auth-switch">
-            <span>¿Ya tienes cuenta?</span>
-            <button type="button" data-auth-view="login">Entrar</button>
+            <span data-i18n="ui.alreadyHaveAnAccount">¿Ya tienes cuenta?</span>
+            <button type="button" data-auth-view="login" data-i18n="ui.signIn8515">Entrar</button>
           </div>
         </section>
       </div>
@@ -307,10 +307,11 @@
 
     <footer class="footer">
       <span>Saphe sCience</span>
-      <span data-i18n="footerText">Academia</span>
+      <span data-i18n="footerText">Academy</span>
     </footer>
 
-    <script src="script.js?v=129"></script>
-    <script type="module" src="auth.js?v=130"></script>
+    <script src="i18n.js?v=132"></script>
+    <script src="script.js?v=132"></script>
+    <script type="module" src="auth.js?v=132"></script>
   </body>
 </html>

@@ -1,5 +1,7 @@
 import { supabase } from "./supabaseClient.js";
 
+const { t, setText, errorText } = window.SapheI18n;
+
 const PROFILE_TABLE = "profiles";
 
 const authModal = document.querySelector("#auth-modal");
@@ -69,10 +71,10 @@ if (authModal) {
     panels.forEach((panel) => {
       panel.hidden = panel.dataset.authPanel !== view;
     });
-    loginStatus.textContent = "";
-    signupStatus.textContent = "";
-    forgotStatus.textContent = "";
-    resetStatus.textContent = "";
+    setText(loginStatus, () => "");
+    setText(signupStatus, () => "");
+    setText(forgotStatus, () => "");
+    setText(resetStatus, () => "");
     const firstInput = authModal.querySelector(`[data-auth-panel="${view}"] input`);
     firstInput?.focus();
   }
@@ -130,7 +132,7 @@ if (authModal) {
     const email = formData.get("email").trim().toLowerCase();
     const password = formData.get("password");
 
-    loginStatus.textContent = "Comprobando acceso...";
+    setText(loginStatus, () => t("ui.signingIn"));
 
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
@@ -138,7 +140,7 @@ if (authModal) {
     });
 
     if (error || !data.user) {
-      loginStatus.textContent = "Correo electrónico o contraseña incorrectos.";
+      setText(loginStatus, () => t("errors.credentials"));
       return;
     }
 
@@ -147,8 +149,7 @@ if (authModal) {
       window.location.href = getProfileRedirect(profile);
     } catch (error) {
       console.error("Error cargando perfil:", error);
-      loginStatus.textContent =
-        "Error: " + (error?.message || JSON.stringify(error));
+      setText(loginStatus, () => errorText(error, t("errors.profile")));
     }
   });
 
@@ -161,11 +162,11 @@ if (authModal) {
     const confirmPassword = formData.get("confirmPassword");
 
     if (password !== confirmPassword) {
-      signupStatus.textContent = "Las contraseñas no coinciden.";
+      setText(signupStatus, () => t("ui.passwordsDoNotMatch"));
       return;
     }
 
-    signupStatus.textContent = "Creando cuenta...";
+    setText(signupStatus, () => t("ui.creatingAccount"));
 
     const { data, error } = await supabase.auth.signUp({
       email,
@@ -176,13 +177,12 @@ if (authModal) {
     });
 
     if (error || !data.user) {
-      signupStatus.textContent = error?.message || "No se ha podido crear la cuenta.";
+      setText(signupStatus, () => errorText(error, t("ui.unableToCreateTheAccount")));
       return;
     }
 
     if (!data.session) {
-      signupStatus.textContent =
-        "Cuenta creada. Revisa tu correo electrónico para confirmar el acceso.";
+      setText(signupStatus, () => t("ui.accountCreatedCheckYourEmailToConfirmYourAccount"));
       loginForm.elements.email.value = email;
       loginForm.elements.password.value = "";
       return;
@@ -192,7 +192,7 @@ if (authModal) {
       const profile = await getProfile(data.user.id);
       window.location.href = getProfileRedirect(profile);
     } catch {
-      signupStatus.textContent = "Cuenta creada, pero no se ha podido cargar el perfil.";
+      setText(signupStatus, () => t("ui.accountCreatedButTheProfileCouldNotBeLoaded"));
     }
   });
 
@@ -202,15 +202,15 @@ if (authModal) {
     const email = formData.get("email").trim();
     const redirectTo = window.location.href.split("#")[0];
 
-    forgotStatus.textContent = "Enviando correo...";
+    setText(forgotStatus, () => t("ui.sendingEmail"));
 
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo,
     });
 
-    forgotStatus.textContent = error
-      ? "No se ha podido enviar el correo de recuperación."
-      : "Si el correo está registrado, recibirás un enlace para modificar la contraseña.";
+    setText(forgotStatus, () => error
+      ? t("ui.unableToSendThePasswordResetEmail")
+      : t("ui.ifThisEmailIsRegisteredYouWillReceiveALinkToResetYourPassword"));
   });
 
   resetForm.addEventListener("submit", async (event) => {
@@ -220,21 +220,21 @@ if (authModal) {
     const confirmPassword = formData.get("confirmPassword");
 
     if (password !== confirmPassword) {
-      resetStatus.textContent = "Las contraseñas no coinciden.";
+      setText(resetStatus, () => t("ui.passwordsDoNotMatch"));
       return;
     }
 
-    resetStatus.textContent = "Actualizando contraseña...";
+    setText(resetStatus, () => t("ui.updatingPassword"));
 
     const { error } = await supabase.auth.updateUser({ password });
 
     if (error) {
-      resetStatus.textContent = "No se ha podido actualizar la contraseña.";
+      setText(resetStatus, () => t("ui.unableToUpdateThePassword"));
       return;
     }
 
     setAuthView("login");
-    loginStatus.textContent = "Contraseña actualizada. Ya puedes entrar.";
+    setText(loginStatus, () => t("ui.passwordUpdatedYouCanNowSignIn"));
   });
 
   supabase.auth.onAuthStateChange((event, session) => {

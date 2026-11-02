@@ -1,15 +1,12 @@
 import { supabase } from "./supabaseClient.js";
 
+const { t, locale, subjectLabel, onLanguageChange, setText, setHTML, errorText } = window.SapheI18n;
+
 const hours = ["15:00", "16:00", "17:00", "18:00", "19:00", "20:00", "21:00"];
 const days = ["Lunes", "Martes", "Miercoles", "Jueves", "Viernes"];
 const UNAVAILABLE_VALUE = "__unavailable__";
 const CLASS_MATERIALS_BUCKET = "class-materials";
-const subjectNames = {
-  mathEs: "Matematicas en castellano",
-  mathEn: "Calculus in English",
-  physicsEs: "Fisica en castellano",
-  physicsEn: "Physics in English",
-};
+const subjectNames = new Proxy({}, { get: (_, key) => subjectLabel(key) });
 
 const teacherForm = document.querySelector("#teacher-form");
 const teacherStatus = document.querySelector("#teacher-status");
@@ -126,7 +123,7 @@ function normalizeClassSession(session, materialsByClassSession = new Map()) {
   const materials = materialsByClassSession.get(session.id) || [];
   const isUnavailableSession = session.type === "unavailable";
   const subject = isUnavailableSession ? "unavailable" : session.subject;
-  const subjectName = isUnavailableSession ? "No disponible" : subjectNames[subject] || subject || "Clase";
+  const subjectName = isUnavailableSession ? t("busy") : subjectNames[subject] || subject || t("ui.class");
   const hour = normalizeTime(session.start_time);
   const endHour = normalizeTime(session.end_time);
   const dateLabel = bookingDate ? formatFullDate(bookingDate) : "";
@@ -149,7 +146,7 @@ function normalizeClassSession(session, materialsByClassSession = new Map()) {
     hour,
     endHour,
     notes: session.notes || "",
-    slot: `${subjectName}: ${dateLabel} de ${hour} a ${endHour}.`,
+    slot: t("slotSummary", { subject: subjectName, date: dateLabel, start: hour, end: endHour }),
     createdAt: session.created_at,
     updatedAt: session.updated_at,
     materials,
@@ -201,7 +198,7 @@ teacherProfile = await loadTeacherProfile();
 
 if (!teacherProfile) {
   redirectToHome();
-  throw new Error("Acceso de profesor no autorizado.");
+  throw new Error(t("ui.teacherAccessDenied"));
 }
 
 try {
@@ -230,7 +227,7 @@ function loadBookings() {
 }
 
 if (teacherUserLabel) {
-  teacherUserLabel.textContent = teacherProfile.username || teacherProfile.email || "Profesor";
+  setText(teacherUserLabel, () => teacherProfile.username || teacherProfile.email || t("ui.teacher"));
 }
 
 function escapeHTML(value) {
@@ -327,7 +324,7 @@ function formatDateKey(date) {
 }
 
 function formatMonth(date) {
-  return new Intl.DateTimeFormat("es-ES", {
+  return new Intl.DateTimeFormat(locale(), {
     month: "long",
     year: "numeric",
   }).format(date);
@@ -344,7 +341,7 @@ function getBookingDate(booking) {
 }
 
 function formatFullDate(date) {
-  return new Intl.DateTimeFormat("es-ES", {
+  return new Intl.DateTimeFormat(locale(), {
     weekday: "long",
     day: "numeric",
     month: "long",
@@ -352,7 +349,7 @@ function formatFullDate(date) {
 }
 
 function formatLongDate(date) {
-  return new Intl.DateTimeFormat("es-ES", {
+  return new Intl.DateTimeFormat(locale(), {
     weekday: "long",
     day: "numeric",
     month: "long",
@@ -375,8 +372,8 @@ function updateWeekHeader(weekDates) {
       ? formatMonth(weekStart)
       : `${formatMonth(weekStart)} - ${formatMonth(weekEnd)}`;
 
-  currentMonth.textContent = monthLabel;
-  currentWeek.textContent = `${weekStart.getDate()} - ${weekEnd.getDate()}`;
+  setText(currentMonth, () => monthLabel);
+  setText(currentWeek, () => `${weekStart.getDate()} - ${weekEnd.getDate()}`);
 }
 
 function updateEditWeekHeader(weekDates) {
@@ -386,15 +383,15 @@ function updateEditWeekHeader(weekDates) {
       ? formatMonth(editWeekStart)
       : `${formatMonth(editWeekStart)} - ${formatMonth(weekEnd)}`;
 
-  editCurrentMonth.textContent = monthLabel;
-  editCurrentWeek.textContent = `${editWeekStart.getDate()} - ${weekEnd.getDate()}`;
+  setText(editCurrentMonth, () => monthLabel);
+  setText(editCurrentWeek, () => `${editWeekStart.getDate()} - ${weekEnd.getDate()}`);
 }
 
 function fillEditDaySelect(selectedDateISO = "") {
   const weekDates = getEditWeekDates();
   const previousValue = selectedDateISO || editDaySelect.value;
 
-  editDaySelect.innerHTML = '<option value="">Selecciona día</option>';
+  editDaySelect.innerHTML = `<option value="">${t("ui.selectADay")}</option>`;
 
   days.forEach((day, index) => {
     const date = weekDates[index];
@@ -430,7 +427,7 @@ function setEditSubject(nextSubject) {
 }
 
 function formatDayHeader(day, date) {
-  return `${day} ${date.getDate()}`;
+  return `${new Intl.DateTimeFormat(locale(), { weekday: "long" }).format(date)} ${date.getDate()}`;
 }
 
 function bookingMatches(booking, nextSubject, day, hour, dateISO) {
@@ -472,7 +469,7 @@ function isUnavailable(booking) {
 }
 
 function getSlotLabel(booking) {
-  return isUnavailable(booking) ? "No disponible" : getStudentName(booking);
+  return isUnavailable(booking) ? t("busy") : getStudentName(booking);
 }
 
 function normalizeStudentProfile(profile) {
@@ -491,7 +488,7 @@ function normalizeStudentProfile(profile) {
 }
 
 function getStudentDisplayName(student) {
-  return [student?.name, student?.surname].filter(Boolean).join(" ") || student?.username || "Alumno";
+  return [student?.name, student?.surname].filter(Boolean).join(" ") || student?.username || t("ui.student");
 }
 
 function findStudentById(studentId) {
@@ -511,15 +508,15 @@ function updateStudentAccessControls() {
   const hasAccess = Boolean(student?.authUserId);
 
   if (studentAccessStatus) {
-    studentAccessStatus.textContent = !student
-      ? "Sin alumno seleccionado."
+    setText(studentAccessStatus, () => !student
+      ? t("ui.noStudentSelected")
       : hasAccess
-        ? "Acceso creado."
-        : "Sin acceso.";
+        ? t("ui.accessCreated")
+        : t("ui.noAccess"));
   }
 
   if (saveStudentAccess) {
-    saveStudentAccess.textContent = hasAccess ? "Cambiar contraseña" : "Crear acceso";
+    setText(saveStudentAccess, () => hasAccess ? t("ui.changePassword") : t("ui.createAccess"));
     saveStudentAccess.disabled = !student;
   }
 
@@ -557,11 +554,8 @@ function getBookingDurationMinutes(booking) {
 
 function formatDurationHours(minutes) {
   const hoursValue = minutes / 60;
-  const formatted = Number.isInteger(hoursValue)
-    ? String(hoursValue)
-    : hoursValue.toFixed(2).replace(".", ",").replace(/0+$/, "").replace(/,$/, "");
-
-  return `${formatted} hora${hoursValue === 1 ? "" : "s"}`;
+  const formatted = new Intl.NumberFormat(locale(), { maximumFractionDigits: 2 }).format(hoursValue);
+  return t(hoursValue === 1 ? "hourOne" : "hourMany", { count: formatted });
 }
 
 function getBookingMaterialKey(booking) {
@@ -619,24 +613,24 @@ async function openClassMaterial(material) {
     return;
   }
 
-  teacherStatus.textContent = "Preparando PDF...";
+  setText(teacherStatus, () => t("ui.preparingPDF"));
   const { data, error } = await supabase.storage
     .from(CLASS_MATERIALS_BUCKET)
     .createSignedUrl(material.file_path, 600);
 
   if (error || !data?.signedUrl) {
     console.error("Error generando URL firmada:", error);
-    teacherStatus.textContent = "No se ha podido abrir el PDF.";
+    setText(teacherStatus, () => t("ui.unableToOpenThePDF"));
     return;
   }
 
   releaseClassMaterialUrl();
   activeClassMaterialUrl = data.signedUrl;
-  classMaterialTitle.textContent = material.file_name || "PDF de la clase";
+  setText(classMaterialTitle, () => material.file_name || t("ui.classPDF"));
   classMaterialFrame.src = `${activeClassMaterialUrl}#toolbar=0&navpanes=0&scrollbar=1`;
   classMaterialModal.hidden = false;
   document.body.classList.add("modal-open");
-  teacherStatus.textContent = "";
+  setText(teacherStatus, () => "");
 }
 
 function closeClassMaterial() {
@@ -709,7 +703,7 @@ function getStudentName(booking) {
     return getStudentDisplayName(student);
   }
 
-  return [booking.name, booking.surname].filter(Boolean).join(" ") || "Alumno";
+  return [booking.name, booking.surname].filter(Boolean).join(" ") || t("ui.student");
 }
 
 function getRegisteredStudents() {
@@ -722,11 +716,11 @@ function fillStudentSelect(selectedStudentKey = "") {
   const students = getRegisteredStudents();
   const normalizedSelectedKey = selectedStudentKey.trim().toLowerCase();
 
-  editStudentSelect.innerHTML = '<option value="">Selecciona alumno</option>';
+  editStudentSelect.innerHTML = `<option value="">${t("ui.selectAStudent")}</option>`;
   const unavailableOption = document.createElement("option");
 
   unavailableOption.value = UNAVAILABLE_VALUE;
-  unavailableOption.textContent = "Hueco no disponible";
+  unavailableOption.textContent = t("ui.unavailableTimeSlot");
   unavailableOption.dataset.unavailable = "true";
   unavailableOption.selected = selectedStudentKey === UNAVAILABLE_VALUE;
   editStudentSelect.appendChild(unavailableOption);
@@ -736,7 +730,7 @@ function fillStudentSelect(selectedStudentKey = "") {
     const label = getStudentDisplayName(student);
 
     option.value = student.id;
-    option.textContent = `${label} (${student.email || "Sin correo"})`;
+    option.textContent = `${label} (${student.email || t("ui.noEmail")})`;
     option.dataset.name = student.name || "";
     option.dataset.surname = student.surname || "";
     option.dataset.email = student.email || "";
@@ -758,7 +752,7 @@ function applySelectedStudentToForm() {
 
   if (option.value === UNAVAILABLE_VALUE) {
     return {
-      name: "No disponible",
+      name: t("busy"),
       surname: "",
       email: "",
       type: "unavailable",
@@ -798,7 +792,7 @@ function renderTodaySummary() {
   }
 
   if (classSessionsLoadError) {
-    todayList.innerHTML = "<p>No se han podido cargar las clases.</p>";
+    todayList.innerHTML = `<p>${t("ui.unableToLoadClasses")}</p>`;
     return;
   }
 
@@ -812,10 +806,10 @@ function renderTodaySummary() {
     )
     .sort((first, second) => String(first.hour).localeCompare(String(second.hour)));
 
-  todayDate.textContent = formatLongDate(now);
+  setText(todayDate, () => formatLongDate(now));
 
   if (todayBookings.length === 0) {
-    todayList.innerHTML = "<p>No tienes clases asignadas para hoy.</p>";
+    todayList.innerHTML = `<p>${t("ui.youHaveNoClassesScheduledForToday")}</p>`;
     return;
   }
 
@@ -826,7 +820,7 @@ function renderTodaySummary() {
         <article>
           <strong>${escapeHTML(booking.hour)} - ${escapeHTML(endHour)}</strong>
           <span>${escapeHTML(getStudentName(booking))}</span>
-          <span>${escapeHTML(booking.subjectName || "Clase")}</span>
+          <span>${escapeHTML(booking.subjectName || t("ui.class"))}</span>
         </article>
       `;
     })
@@ -839,12 +833,12 @@ function renderStudents() {
   }
 
   if (studentProfilesLoadError) {
-    studentList.innerHTML = "<p class=\"student-empty\">No se han podido cargar los alumnos desde Supabase.</p>";
+    studentList.innerHTML = `<p class="student-empty">${t("ui.unableToLoadStudentsFromSupabase")}</p>`;
     return;
   }
 
   if (classSessionsLoadError) {
-    studentList.innerHTML = "<p class=\"student-empty\">No se han podido cargar las clases desde Supabase.</p>";
+    studentList.innerHTML = `<p class="student-empty">${t("ui.unableToLoadClassesFromSupabase")}</p>`;
     return;
   }
 
@@ -864,7 +858,7 @@ function renderStudents() {
   });
 
   if (students.length === 0) {
-    studentList.innerHTML = "<p class=\"student-empty\">Todavía no hay alumnos inscritos.</p>";
+    studentList.innerHTML = `<p class="student-empty">${t("ui.thereAreNoEnrolledStudentsYet")}</p>`;
     return;
   }
 
@@ -872,7 +866,7 @@ function renderStudents() {
     const totals = classes.reduce((monthMap, booking) => {
       const bookingDate = getBookingDate(booking);
       const monthKey = booking.dateISO ? booking.dateISO.slice(0, 7) : booking.day || "sin-fecha";
-      const monthLabel = bookingDate ? formatMonth(bookingDate) : "Sin fecha";
+      const monthLabel = bookingDate ? formatMonth(bookingDate) : t("ui.noDate");
       const current = monthMap.get(monthKey) || { label: monthLabel, total: 0, minutes: 0 };
 
       current.total += 1;
@@ -886,7 +880,7 @@ function renderStudents() {
       .map(([, month]) => `
         <li>
           <span>${escapeHTML(month.label)}</span>
-          <strong>${month.total} clase${month.total === 1 ? "" : "s"} · ${escapeHTML(formatDurationHours(month.minutes))}</strong>
+          <strong>${t(month.total === 1 ? "classCountOne" : "classCountMany", { count: month.total })} · ${escapeHTML(formatDurationHours(month.minutes))}</strong>
         </li>
       `)
       .join("");
@@ -907,25 +901,25 @@ function renderStudents() {
             ? booking.materials
                 .map((material) => `
                   <div class="class-material-actions">
-                    <span class="class-material-name">${escapeHTML(material.file_name || "PDF de la clase")}</span>
-                    <button class="class-material-view" type="button" data-material-view="${escapeAttribute(material.id)}">Ver PDF</button>
-                    <button class="class-material-view" type="button" data-material-delete="${escapeAttribute(material.id)}">Eliminar PDF</button>
+                    <span class="class-material-name">${escapeHTML(material.file_name || t("ui.classPDF"))}</span>
+                    <button class="class-material-view" type="button" data-material-view="${escapeAttribute(material.id)}">${t("ui.viewPDF")}</button>
+                    <button class="class-material-view" type="button" data-material-delete="${escapeAttribute(material.id)}">${t("ui.deletePDF")}</button>
                   </div>
                 `)
                 .join("")
-            : `<span class="class-material-empty">Sin PDF subido</span>`;
+            : `<span class="class-material-empty">${t("ui.noPDFUploaded")}</span>`;
           return `
             <li>
-              <strong>${escapeHTML(booking.subjectName || "Clase")}</strong>
-              <span>${escapeHTML(booking.dateLabel || booking.day || "Sin fecha")}, ${escapeHTML(booking.hour)} - ${escapeHTML(endHour)}</span>
-              <span>${escapeHTML(durationLabel)} dadas</span>
+              <strong>${escapeHTML(booking.subjectName || t("ui.class"))}</strong>
+              <span>${escapeHTML(booking.dateLabel || booking.day || t("ui.noDate"))}, ${escapeHTML(booking.hour)} - ${escapeHTML(endHour)}</span>
+              <span>${escapeHTML(t("durationTaught", { duration: durationLabel }))}</span>
               <div class="class-material-slot">
-                <span class="class-material-title">Notas o ejercicios PDF</span>
+                <span class="class-material-title">${t("ui.notesOrPDFExercises")}</span>
                 ${materialItems}
                 <div class="class-material-actions">
                   <label class="class-material-upload">
                     <input type="file" accept="application/pdf" data-material-upload="${escapeAttribute(materialKey)}" />
-                    Subir PDF
+                    ${t("ui.uploadPDF")}
                   </label>
                 </div>
               </div>
@@ -937,13 +931,13 @@ function renderStudents() {
       return `
         <article class="student-file-card">
           <strong>${escapeHTML(studentName)}</strong>
-          <span>${escapeHTML(student.email || "Sin correo")}</span>
-          <span>${student.authUserId ? "Acceso creado" : "Sin acceso"}</span>
-          <span>${student.classes.length} clase${student.classes.length === 1 ? "" : "s"} inscrita${student.classes.length === 1 ? "" : "s"}</span>
+          <span>${escapeHTML(student.email || t("ui.noEmail"))}</span>
+          <span>${student.authUserId ? t("ui.accessCreated5f3d") : t("ui.noAccessa78a")}</span>
+          <span>${t(student.classes.length === 1 ? "enrolledOne" : "enrolledMany", { count: student.classes.length })}</span>
           <ul class="student-monthly-counts">${monthlyTotals}</ul>
           <ul class="student-class-list">${nextClasses}</ul>
           <button class="teacher-remove" type="button" data-student-id="${escapeAttribute(student.id)}">
-            Editar alumno
+            ${t("ui.editStudent")}
           </button>
         </article>
       `;
@@ -953,7 +947,7 @@ function renderStudents() {
 
 function renderSchedule() {
   if (classSessionsLoadError) {
-    scheduleStatus.textContent = "No se han podido cargar las clases desde Supabase.";
+    setText(scheduleStatus, () => t("ui.unableToLoadClassesFromSupabase"));
   }
 
   const bookings = loadBookings();
@@ -963,7 +957,7 @@ function renderSchedule() {
   scheduleHead.innerHTML = "";
   scheduleBody.innerHTML = "";
 
-  ["Hora", ...days.map((day, index) => formatDayHeader(day, weekDates[index]))].forEach((label) => {
+  [t("time"), ...days.map((day, index) => formatDayHeader(day, weekDates[index]))].forEach((label) => {
     const th = document.createElement("th");
     th.textContent = label;
     scheduleHead.appendChild(th);
@@ -1002,8 +996,8 @@ function renderSchedule() {
           button.setAttribute(
             "aria-label",
             isUnavailable(slotBooking)
-              ? `No disponible el ${dateLabel} de ${slotBooking.hour} a ${slotBooking.endHour || getEndHour(slotBooking.hour)}`
-              : `${getStudentName(slotBooking)}: ${slotBooking.subjectName || "Clase"} el ${dateLabel} de ${slotBooking.hour} a ${slotBooking.endHour || getEndHour(slotBooking.hour)}`
+              ? t("unavailableAria", { date: dateLabel, start: slotBooking.hour, end: slotBooking.endHour || getEndHour(slotBooking.hour) })
+              : t("teacherClassAria", { name: getStudentName(slotBooking), subject: slotBooking.subjectName || t("ui.class"), date: dateLabel, start: slotBooking.hour, end: slotBooking.endHour || getEndHour(slotBooking.hour) })
           );
           cell.appendChild(button);
         });
@@ -1012,9 +1006,9 @@ function renderSchedule() {
 
         button.type = "button";
         button.className = "slot available slot-readonly";
-        button.textContent = "Libre";
+        button.textContent = t("available");
         button.disabled = true;
-        button.setAttribute("aria-label", `${dateLabel} a las ${hour}`);
+        button.setAttribute("aria-label", t("timeAria", { date: dateLabel, time: hour }));
         cell.appendChild(button);
       }
       row.appendChild(cell);
@@ -1030,7 +1024,7 @@ function renderEditableSchedule() {
   }
 
   if (classSessionsLoadError) {
-    editScheduleStatus.textContent = "No se han podido cargar las clases desde Supabase.";
+    setText(editScheduleStatus, () => t("ui.unableToLoadClassesFromSupabase"));
   }
 
   const values = readAssignmentForm();
@@ -1042,7 +1036,7 @@ function renderEditableSchedule() {
   editScheduleHead.innerHTML = "";
   editScheduleBody.innerHTML = "";
 
-  ["Hora", ...days.map((day, index) => formatDayHeader(day, weekDates[index]))].forEach((label) => {
+  [t("time"), ...days.map((day, index) => formatDayHeader(day, weekDates[index]))].forEach((label) => {
     const th = document.createElement("th");
     th.textContent = label;
     editScheduleHead.appendChild(th);
@@ -1080,8 +1074,8 @@ function renderEditableSchedule() {
           button.setAttribute(
             "aria-label",
             isUnavailable(slotBooking)
-              ? `No disponible el ${dateLabel} de ${slotBooking.hour} a ${slotBooking.endHour || getEndHour(slotBooking.hour)}`
-              : `${getStudentName(slotBooking)}: ${slotBooking.subjectName || "Clase"} el ${dateLabel} de ${slotBooking.hour} a ${slotBooking.endHour || getEndHour(slotBooking.hour)}`
+              ? t("unavailableAria", { date: dateLabel, start: slotBooking.hour, end: slotBooking.endHour || getEndHour(slotBooking.hour) })
+              : t("teacherClassAria", { name: getStudentName(slotBooking), subject: slotBooking.subjectName || t("ui.class"), date: dateLabel, start: slotBooking.hour, end: slotBooking.endHour || getEndHour(slotBooking.hour) })
           );
           button.addEventListener("click", () => {
             selectEditableSlot({
@@ -1103,9 +1097,9 @@ function renderEditableSchedule() {
 
         button.type = "button";
         button.className = "slot available";
-        button.textContent = "Libre";
+        button.textContent = t("available");
         button.disabled = true;
-        button.setAttribute("aria-label", `${dateLabel} a las ${hour}`);
+        button.setAttribute("aria-label", t("timeAria", { date: dateLabel, time: hour }));
         cell.appendChild(button);
       }
 
@@ -1128,25 +1122,25 @@ function selectEditableSlot(selection) {
   }
   fillStudentSelect(isUnavailableSelection ? UNAVAILABLE_VALUE : selection.existingBooking?.studentId || selection.studentId || selection.existingBooking?.email || selection.email || "");
   fillEditDaySelect(selection.dateISO);
-  editSlotTitle.textContent = isUnavailableSelection
-    ? `No disponible: ${selection.dateLabel}`
-    : `${subjectNames[selection.subject]}: ${selection.dateLabel}`;
-  editSlotHelp.textContent = selection.existingBooking
-    ? "Puedes actualizar la hora exacta o retirar este tramo del calendario."
-    : "Elige un alumno registrado o un hueco no disponible y ajusta el horario exacto.";
+  setText(editSlotTitle, () => isUnavailableSelection
+    ? `${t("busy")}: ${selection.dateLabel}`
+    : `${subjectNames[selection.subject]}: ${selection.dateLabel}`);
+  setText(editSlotHelp, () => selection.existingBooking
+    ? t("ui.youCanChangeTheExactTimeOrRemoveThisTimeSlotFromTheCalendar")
+    : t("ui.chooseARegisteredStudentOrAnUnavailableTimeSlotAndSetTheExactTime"));
   editStartTime.value = selection.startHour;
   editEndTime.value = selection.endHour;
   editClassNotes.value = selection.existingBooking?.notes || "";
   removeEditSlot.hidden = !selection.existingBooking;
-  editScheduleStatus.innerHTML = `<strong>${isUnavailableSelection ? "No disponible" : subjectNames[selection.subject]}: ${selection.dateLabel}</strong><span>Tramo seleccionado.</span>`;
+  setHTML(editScheduleStatus, () => `<strong>${isUnavailableSelection ? t("busy") : subjectNames[selection.subject]}: ${selection.dateLabel}</strong><span>${t("ui.timeSlotSelected")}</span>`);
 }
 
 function clearPendingEditSelection() {
   pendingEditSelection = null;
 
   if (editSlotEditor) {
-    editSlotTitle.textContent = "Añadir clase";
-    editSlotHelp.textContent = "Elige un alumno registrado o un hueco no disponible y ajusta el horario exacto.";
+    setText(editSlotTitle, () => t("ui.addClass"));
+    setText(editSlotHelp, () => t("ui.chooseARegisteredStudentOrAnUnavailableTimeSlotAndSetTheExactTime"));
     editClassNotes.value = "";
     removeEditSlot.hidden = true;
   }
@@ -1160,18 +1154,17 @@ async function savePendingEditSelection() {
   const selectedDay = editDaySelect.selectedOptions[0];
 
   if (!selectedStudent) {
-    editScheduleStatus.textContent = "Selecciona primero el alumno registrado.";
+    setText(editScheduleStatus, () => t("ui.selectARegisteredStudentFirst"));
     return;
   }
 
   if (!selectedDay || !selectedDay.value) {
-    editScheduleStatus.textContent = "Selecciona primero el día de la clase.";
+    setText(editScheduleStatus, () => t("ui.selectTheClassDayFirst"));
     return;
   }
 
   if (!startHour || !endHour || minutesFromTime(endHour) <= minutesFromTime(startHour)) {
-    editScheduleStatus.textContent =
-      "La hora de fin tiene que ser posterior a la hora de inicio.";
+    setText(editScheduleStatus, () => t("ui.theEndTimeMustBeLaterThanTheStartTime"));
     return;
   }
 
@@ -1184,7 +1177,7 @@ async function savePendingEditSelection() {
     ...selection,
     ...selectedStudent,
     subject: selectedStudent.type === "unavailable" ? "unavailable" : selection.subject,
-    subjectName: selectedStudent.type === "unavailable" ? "No disponible" : subjectNames[selection.subject],
+    subjectName: selectedStudent.type === "unavailable" ? t("busy") : subjectNames[selection.subject],
     type: selectedStudent.type || "class",
     day: selectedDay.dataset.day,
     dateISO: selectedDay.value,
@@ -1198,14 +1191,14 @@ async function savePendingEditSelection() {
 
 async function removePendingEditSelection() {
   if (!pendingEditSelection) {
-    editScheduleStatus.textContent = "Selecciona primero una clase asignada en amarillo.";
+    setText(editScheduleStatus, () => t("ui.firstSelectAnAssignedClassHighlightedInYellow"));
     return;
   }
 
   const selectedStudent = applySelectedStudentToForm();
 
   if (!selectedStudent) {
-    editScheduleStatus.textContent = "Selecciona primero el alumno registrado.";
+    setText(editScheduleStatus, () => t("ui.selectARegisteredStudentFirst"));
     return;
   }
 
@@ -1213,7 +1206,7 @@ async function removePendingEditSelection() {
     ...pendingEditSelection,
     ...selectedStudent,
     subject: selectedStudent.type === "unavailable" ? "unavailable" : pendingEditSelection.subject,
-    subjectName: selectedStudent.type === "unavailable" ? "No disponible" : subjectNames[pendingEditSelection.subject],
+    subjectName: selectedStudent.type === "unavailable" ? t("busy") : subjectNames[pendingEditSelection.subject],
     type: selectedStudent.type || "class",
     slotHour: getTimeSlotHour(editStartTime.value || pendingEditSelection.startHour),
     hour: editStartTime.value || pendingEditSelection.startHour,
@@ -1226,8 +1219,8 @@ async function toggleBooking(selection, action = "save") {
   const isUnavailableSelection = selection.type === "unavailable";
 
   if (!isUnavailableSelection && !selection.studentId) {
-    teacherStatus.textContent = "Selecciona un alumno registrado antes de asignar una clase.";
-    editScheduleStatus.textContent = "Faltan los datos del alumno.";
+    setText(teacherStatus, () => t("ui.selectARegisteredStudentBeforeSchedulingAClass"));
+    setText(editScheduleStatus, () => t("ui.studentDetailsAreMissing"));
     return;
   }
 
@@ -1259,10 +1252,10 @@ async function toggleBooking(selection, action = "save") {
   const occupiedIndex = bookings.findIndex((booking, index) =>
     index !== existingIndex && bookingOverlaps(booking, selection)
   );
-  const selectionLabel = isUnavailableSelection
-    ? "No disponible"
+  const selectionLabel = () => isUnavailableSelection
+    ? t("busy")
     : subjectNames[selection.subject];
-  const slot = `${selectionLabel}: ${selection.dateLabel} de ${selection.hour} a ${selection.endHour}.`;
+  const slot = () => t("slotSummary", { subject: selectionLabel(), date: selection.dateISO ? formatFullDate(parseDateKey(selection.dateISO)) : selection.dateLabel, start: selection.hour, end: selection.endHour });
 
   if (action === "remove" && existingIndex >= 0) {
     const bookingToRemove = bookings[existingIndex];
@@ -1274,15 +1267,15 @@ async function toggleBooking(selection, action = "save") {
 
     if (error) {
       console.error("Error eliminando clase:", error);
-      teacherStatus.textContent = "No se ha podido retirar el tramo.";
-      editScheduleStatus.innerHTML = `<strong>${slot}</strong><span>Error al retirar el tramo.</span>`;
+      setText(teacherStatus, () => t("ui.unableToRemoveTheTimeSlot"));
+      setHTML(editScheduleStatus, () => `<strong>${slot()}</strong><span>${t("ui.errorRemovingTheTimeSlot")}</span>`);
       return;
     }
 
-    teacherStatus.textContent = isUnavailableSelection
-      ? "Hueco no disponible retirado del calendario."
-      : "Clase retirada del perfil del alumno.";
-    editScheduleStatus.innerHTML = `<strong>${slot}</strong><span>Tramo retirado.</span>`;
+    setText(teacherStatus, () => isUnavailableSelection
+      ? t("ui.unavailableTimeSlotRemovedFromTheCalendar")
+      : t("ui.classRemovedFromTheStudentProfile"));
+    setHTML(editScheduleStatus, () => `<strong>${slot()}</strong><span>${t("ui.timeSlotRemoved")}</span>`);
     pendingEditSelection = null;
     clearPendingEditSelection();
   } else if (existingIndex >= 0) {
@@ -1290,10 +1283,10 @@ async function toggleBooking(selection, action = "save") {
 
     if (occupiedIndex >= 0) {
       const occupiedBooking = bookings[occupiedIndex];
-      const occupiedStudent = getSlotLabel(occupiedBooking);
+      const occupiedStudent = () => getSlotLabel(occupiedBooking);
 
-      teacherStatus.textContent = `Ese hueco ya está asignado a ${occupiedStudent}.`;
-      editScheduleStatus.innerHTML = `<strong>${slot}</strong><span>Ese hueco ya tiene alumno.</span>`;
+      setText(teacherStatus, () => t("occupied", { name: occupiedStudent() }));
+      setHTML(editScheduleStatus, () => `<strong>${slot()}</strong><span>${t("ui.thisTimeSlotAlreadyHasAStudent")}</span>`);
       return;
     }
 
@@ -1305,25 +1298,25 @@ async function toggleBooking(selection, action = "save") {
 
     if (error) {
       console.error("Error actualizando clase:", error);
-      teacherStatus.textContent = "No se ha podido actualizar el tramo.";
-      editScheduleStatus.innerHTML = `<strong>${slot}</strong><span>Error al actualizar el tramo.</span>`;
+      setText(teacherStatus, () => t("ui.unableToUpdateTheTimeSlot"));
+      setHTML(editScheduleStatus, () => `<strong>${slot()}</strong><span>${t("ui.errorUpdatingTheTimeSlot")}</span>`);
       return;
     }
 
-    teacherStatus.textContent = isUnavailableSelection
-      ? "Hueco no disponible actualizado."
-      : "Clase actualizada en el perfil del alumno.";
-    editScheduleStatus.innerHTML = `<strong>${slot}</strong><span>Tramo actualizado.</span>`;
+    setText(teacherStatus, () => isUnavailableSelection
+      ? t("ui.unavailableTimeSlotUpdated")
+      : t("ui.classUpdatedInTheStudentProfile"));
+    setHTML(editScheduleStatus, () => `<strong>${slot()}</strong><span>${t("ui.timeSlotUpdated")}</span>`);
   } else if (occupiedIndex >= 0) {
     const occupiedBooking = bookings[occupiedIndex];
-    const occupiedStudent = getSlotLabel(occupiedBooking);
+    const occupiedStudent = () => getSlotLabel(occupiedBooking);
     const sameStudent =
       isUnavailableSelection ||
       (selection.studentId && occupiedBooking.studentId === selection.studentId);
 
     if (!sameStudent || occupiedBooking.subject !== selection.subject || isUnavailable(occupiedBooking) !== isUnavailableSelection) {
-      teacherStatus.textContent = `Ese hueco ya está asignado a ${occupiedStudent}.`;
-      editScheduleStatus.innerHTML = `<strong>${slot}</strong><span>Ese hueco ya tiene alumno.</span>`;
+      setText(teacherStatus, () => t("occupied", { name: occupiedStudent() }));
+      setHTML(editScheduleStatus, () => `<strong>${slot()}</strong><span>${t("ui.thisTimeSlotAlreadyHasAStudent")}</span>`);
       return;
     }
 
@@ -1335,15 +1328,15 @@ async function toggleBooking(selection, action = "save") {
 
     if (error) {
       console.error("Error actualizando clase:", error);
-      teacherStatus.textContent = "No se ha podido actualizar el tramo.";
-      editScheduleStatus.innerHTML = `<strong>${slot}</strong><span>Error al actualizar el tramo.</span>`;
+      setText(teacherStatus, () => t("ui.unableToUpdateTheTimeSlot"));
+      setHTML(editScheduleStatus, () => `<strong>${slot()}</strong><span>${t("ui.errorUpdatingTheTimeSlot")}</span>`);
       return;
     }
 
-    teacherStatus.textContent = isUnavailableSelection
-      ? "Hueco no disponible actualizado."
-      : "Clase actualizada en el perfil del alumno.";
-    editScheduleStatus.innerHTML = `<strong>${slot}</strong><span>Tramo actualizado.</span>`;
+    setText(teacherStatus, () => isUnavailableSelection
+      ? t("ui.unavailableTimeSlotUpdated")
+      : t("ui.classUpdatedInTheStudentProfile"));
+    setHTML(editScheduleStatus, () => `<strong>${slot()}</strong><span>${t("ui.timeSlotUpdated")}</span>`);
   } else {
     const { error } = await supabase
       .from("class_sessions")
@@ -1351,18 +1344,15 @@ async function toggleBooking(selection, action = "save") {
 
     if (error) {
       console.error("Error creando clase:", error);
-      const insertErrorMessage = [error.message, error.details, error.hint, error.code]
-        .filter(Boolean)
-        .join(" ");
-      teacherStatus.textContent = insertErrorMessage || "No se ha podido guardar el tramo.";
-      editScheduleStatus.innerHTML = `<strong>${slot}</strong><span>${escapeHTML(insertErrorMessage || "Error al guardar el tramo.")}</span>`;
+      setText(teacherStatus, () => errorText(error, t("ui.unableToSaveTheTimeSlot")));
+      setHTML(editScheduleStatus, () => `<strong>${slot()}</strong><span>${escapeHTML(errorText(error, t("ui.errorSavingTheTimeSlot")))}</span>`);
       return;
     }
 
-    teacherStatus.textContent = isUnavailableSelection
-      ? "Hueco no disponible añadido al calendario."
-      : "Clase asignada al perfil del alumno.";
-    editScheduleStatus.innerHTML = `<strong>${slot}</strong><span>Tramo guardado.</span>`;
+    setText(teacherStatus, () => isUnavailableSelection
+      ? t("ui.unavailableTimeSlotAddedToTheCalendar")
+      : t("ui.classScheduledInTheStudentProfile"));
+    setHTML(editScheduleStatus, () => `<strong>${slot()}</strong><span>${t("ui.timeSlotSaved")}</span>`);
   }
 
   saveDraft();
@@ -1402,7 +1392,7 @@ async function reloadStudentProfiles(selectedStudentKey = "") {
   } catch (error) {
     studentProfilesLoadError = error;
     console.error("Error cargando alumnos:", error);
-    teacherStatus.textContent = "No se ha podido recargar la lista de alumnos.";
+    setText(teacherStatus, () => t("ui.unableToReloadTheStudentList"));
     return;
   }
 
@@ -1419,7 +1409,7 @@ async function reloadClassSessions() {
   } catch (error) {
     classSessionsLoadError = error;
     console.error("Error cargando clases:", error);
-    teacherStatus.textContent = "No se han podido recargar las clases.";
+    setText(teacherStatus, () => t("ui.unableToReloadClasses"));
   }
 }
 
@@ -1451,12 +1441,11 @@ async function saveStudentDetails() {
   };
 
   if (!values.name || !studentPayload.username) {
-    teacherStatus.textContent =
-      "Añade al menos nombre y usuario para guardar el alumno.";
+    setText(teacherStatus, () => t("ui.enterAtLeastAFirstNameAndUsernameToSaveTheStudent"));
     return;
   }
 
-  teacherStatus.textContent = isEditingStudent ? "Actualizando alumno..." : "Creando alumno...";
+  setText(teacherStatus, () => isEditingStudent ? t("ui.updatingStudent") : t("ui.creatingStudent"));
   saveStudentDetailsButton.disabled = true;
 
   try {
@@ -1499,10 +1488,10 @@ async function saveStudentDetails() {
     await reloadStudentProfiles(savedStudent?.id || values.email);
     editingStudentId = isEditingStudent ? savedStudent?.id || editingStudentId : "";
     updateStudentAccessControls();
-    teacherStatus.textContent = isEditingStudent ? "Alumno actualizado correctamente." : "Alumno creado correctamente.";
+    setText(teacherStatus, () => isEditingStudent ? t("ui.studentUpdatedSuccessfully") : t("ui.studentCreatedSuccessfully"));
   } catch (error) {
     console.error("Error guardando alumno:", error);
-    teacherStatus.textContent = error.message || "No se ha podido guardar el alumno.";
+    setText(teacherStatus, () => errorText(error, t("ui.unableToSaveTheStudent")));
   } finally {
     saveStudentDetailsButton.disabled = false;
   }
@@ -1512,13 +1501,13 @@ async function saveStudentClassLink() {
   const student = getEditingStudent();
 
   if (!student) {
-    teacherStatus.textContent = "Carga o guarda primero un alumno para guardar su enlace de clase.";
+    setText(teacherStatus, () => t("ui.loadOrSaveAStudentBeforeSavingTheirClassLink"));
     return;
   }
 
   const classUrl = teacherForm.elements.classUrl.value.trim();
   saveClassLinkButton.disabled = true;
-  teacherStatus.textContent = "Guardando enlace de clase...";
+  setText(teacherStatus, () => t("ui.savingClassLink"));
 
   try {
     const { error } = await supabase
@@ -1537,10 +1526,10 @@ async function saveStudentClassLink() {
     await reloadStudentProfiles(editingStudentId);
     teacherForm.elements.classUrl.value = classUrl;
     updateStudentAccessControls();
-    teacherStatus.textContent = "Enlace de clase guardado.";
+    setText(teacherStatus, () => t("ui.classLinkSaved"));
   } catch (error) {
     console.error("Error guardando enlace de clase:", error);
-    teacherStatus.textContent = error.message || "No se ha podido guardar el enlace de clase.";
+    setText(teacherStatus, () => errorText(error, t("ui.unableToSaveTheClassLink")));
   } finally {
     updateStudentAccessControls();
   }
@@ -1553,17 +1542,17 @@ async function saveStudentAccessCredentials() {
   const hasAccess = Boolean(student?.authUserId);
 
   if (!student) {
-    teacherStatus.textContent = "Carga o guarda primero un alumno para crear su acceso.";
+    setText(teacherStatus, () => t("ui.loadOrSaveAStudentBeforeCreatingTheirAccess"));
     return;
   }
 
   if (password.length < 8) {
-    teacherStatus.textContent = "La contraseña debe tener al menos 8 caracteres.";
+    setText(teacherStatus, () => t("ui.thePasswordMustContainAtLeast8Characters"));
     return;
   }
 
   saveStudentAccess.disabled = true;
-  teacherStatus.textContent = hasAccess ? "Cambiando contraseña..." : "Creando acceso del alumno...";
+  setText(teacherStatus, () => hasAccess ? t("ui.changingPassword") : t("ui.creatingStudentAccess"));
 
   try {
     if (hasAccess) {
@@ -1575,11 +1564,11 @@ async function saveStudentAccessCredentials() {
       });
 
       if (error) {
-        throw new Error(await getFunctionErrorMessage(error, "No se ha podido cambiar la contraseña."));
+        throw new Error(await getFunctionErrorMessage(error, t("ui.unableToChangeThePassword")));
       }
 
       teacherForm.elements.studentPassword.value = "";
-      teacherStatus.textContent = "Contraseña actualizada correctamente.";
+      setText(teacherStatus, () => t("ui.passwordUpdatedSuccessfully"));
       return;
     }
 
@@ -1587,7 +1576,7 @@ async function saveStudentAccessCredentials() {
     const username = values.studentUsername.trim();
 
     if (!email || !username) {
-      teacherStatus.textContent = "Añade correo, usuario y contraseña para crear el acceso.";
+      setText(teacherStatus, () => t("ui.enterAnEmailUsernameAndPasswordToCreateAccess"));
       return;
     }
 
@@ -1595,8 +1584,7 @@ async function saveStudentAccessCredentials() {
     const session = sessionData?.session;
 
     if (sessionError || !session?.access_token) {
-      teacherStatus.textContent =
-        "La sesión del profesor no está disponible. Vuelve a iniciar sesión.";
+      setText(teacherStatus, () => t("ui.theTeacherSessionIsUnavailablePleaseSignInAgain"));
       return;
     }
 
@@ -1619,17 +1607,17 @@ async function saveStudentAccessCredentials() {
     console.log("create-student error:", error);
 
     if (error) {
-      throw new Error(await getFunctionErrorMessage(error, "No se ha podido crear el acceso."));
+      throw new Error(await getFunctionErrorMessage(error, t("ui.unableToCreateAccess")));
     }
 
     teacherForm.elements.studentPassword.value = "";
     saveDraft();
     await reloadStudentProfiles(student.id);
     updateStudentAccessControls();
-    teacherStatus.textContent = "Acceso creado correctamente.";
+    setText(teacherStatus, () => t("ui.accessCreatedSuccessfully"));
   } catch (error) {
     console.error("Error guardando acceso:", error);
-    teacherStatus.textContent = error.message || "No se ha podido guardar el acceso.";
+    setText(teacherStatus, () => errorText(error, t("ui.unableToSaveAccess")));
   } finally {
     updateStudentAccessControls();
   }
@@ -1652,13 +1640,13 @@ async function deleteSelectedStudent() {
   const student = getEditingStudent();
 
   if (!student) {
-    teacherStatus.textContent = "Carga primero un alumno para eliminarlo.";
+    setText(teacherStatus, () => t("ui.loadAStudentBeforeDeletingThem"));
     return;
   }
 
   const studentName = getStudentDisplayName(student);
   const confirmed = window.confirm(
-    `¿Seguro que quieres eliminar a ${studentName}? Se eliminarán sus clases, notas y materiales asociados. Esta acción no se puede deshacer.`
+    t("deleteStudentConfirm", { name: studentName })
   );
 
   if (!confirmed) {
@@ -1669,12 +1657,11 @@ async function deleteSelectedStudent() {
   const session = sessionData?.session;
 
   if (!session?.access_token) {
-    teacherStatus.textContent =
-      "La sesión del profesor no está disponible. Vuelve a iniciar sesión.";
+    setText(teacherStatus, () => t("ui.theTeacherSessionIsUnavailablePleaseSignInAgain"));
     return;
   }
 
-  teacherStatus.textContent = "Eliminando alumno...";
+  setText(teacherStatus, () => t("ui.deletingStudent"));
   deleteStudentButton.disabled = true;
 
   try {
@@ -1691,7 +1678,7 @@ async function deleteSelectedStudent() {
     console.log("delete-student error:", error);
 
     if (error) {
-      let deleteErrorMessage = error.message || "No se ha podido eliminar el alumno.";
+      let deleteErrorMessage = errorText(error, t("ui.unableToDeleteTheStudent"));
 
       if (error.context) {
         try {
@@ -1722,10 +1709,10 @@ async function deleteSelectedStudent() {
     renderStudents();
     renderSchedule();
     renderEditableSchedule();
-    teacherStatus.textContent = "Alumno eliminado correctamente.";
+    setText(teacherStatus, () => t("ui.studentDeletedSuccessfully"));
   } catch (error) {
     console.error("Error eliminando alumno:", error);
-    teacherStatus.textContent = error.message || "No se ha podido eliminar el alumno.";
+    setText(teacherStatus, () => errorText(error, t("ui.unableToDeleteTheStudent")));
     updateStudentAccessControls();
   }
 }
@@ -1751,20 +1738,20 @@ studentList?.addEventListener("click", async (event) => {
     const materialMatch = findClassMaterialById(bookings, materialDeleteButton.dataset.materialDelete);
 
     if (!materialMatch?.material) {
-      teacherStatus.textContent = "No se ha encontrado el PDF para eliminarlo.";
+      setText(teacherStatus, () => t("ui.thePDFToDeleteCouldNotBeFound"));
       return;
     }
 
     const { material } = materialMatch;
 
-    teacherStatus.textContent = "Eliminando PDF...";
+    setText(teacherStatus, () => t("ui.deletingPDF"));
     const { error: storageError } = await supabase.storage
       .from(CLASS_MATERIALS_BUCKET)
       .remove([material.file_path]);
 
     if (storageError) {
       console.error("Error eliminando PDF de Storage:", storageError);
-      teacherStatus.textContent = storageError.message || "No se ha podido eliminar el archivo PDF.";
+      setText(teacherStatus, () => errorText(storageError, t("ui.unableToDeleteThePDFFile")));
       return;
     }
 
@@ -1775,13 +1762,13 @@ studentList?.addEventListener("click", async (event) => {
 
     if (deleteError) {
       console.error("Error eliminando metadatos del PDF:", deleteError);
-      teacherStatus.textContent = deleteError.message || "No se ha podido eliminar la información del PDF.";
+      setText(teacherStatus, () => errorText(deleteError, t("ui.unableToDeleteThePDFMetadata")));
       return;
     }
 
     await reloadClassSessions();
     renderStudents();
-    teacherStatus.textContent = "PDF eliminado correctamente.";
+    setText(teacherStatus, () => t("ui.pdfDeletedSuccessfully"));
     return;
   }
 
@@ -1813,7 +1800,7 @@ studentList?.addEventListener("click", async (event) => {
   updateStudentAccessControls();
   setEditSubject(booking?.subject || "mathEs");
   saveDraft();
-  teacherStatus.textContent = "Alumno cargado. Puedes actualizar sus datos académicos.";
+  setText(teacherStatus, () => t("ui.studentLoadedYouCanUpdateTheirAcademicDetails"));
   renderSchedule();
   renderEditableSchedule();
   document.querySelector("#editar-clases")?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -1833,7 +1820,7 @@ studentList?.addEventListener("change", async (event) => {
   }
 
   if (file.type !== "application/pdf") {
-    teacherStatus.textContent = "Solo puedes subir archivos PDF.";
+    setText(teacherStatus, () => t("ui.onlyPDFFilesCanBeUploaded"));
     input.value = "";
     return;
   }
@@ -1842,7 +1829,7 @@ studentList?.addEventListener("change", async (event) => {
   const booking = findBookingByMaterialKey(bookings, input.dataset.materialUpload);
 
   if (!booking?.id) {
-    teacherStatus.textContent = "No se ha encontrado la clase para guardar el PDF.";
+    setText(teacherStatus, () => t("ui.theClassForThisPDFCouldNotBeFound"));
     input.value = "";
     return;
   }
@@ -1852,7 +1839,7 @@ studentList?.addEventListener("change", async (event) => {
   const mimeType = file.type || "application/pdf";
   const uploadedAt = new Date().toISOString();
 
-  teacherStatus.textContent = "Subiendo PDF...";
+  setText(teacherStatus, () => t("ui.uploadingPDF"));
 
   const { error: uploadError } = await supabase.storage
     .from(CLASS_MATERIALS_BUCKET)
@@ -1863,7 +1850,7 @@ studentList?.addEventListener("change", async (event) => {
 
   if (uploadError) {
     console.error("Error subiendo PDF:", uploadError);
-    teacherStatus.textContent = uploadError.message || "No se ha podido subir el PDF.";
+    setText(teacherStatus, () => errorText(uploadError, t("ui.unableToUploadThePDF")));
     input.value = "";
     return;
   }
@@ -1886,14 +1873,14 @@ studentList?.addEventListener("change", async (event) => {
   if (insertError) {
     console.error("Error guardando metadatos del PDF:", insertError);
     await supabase.storage.from(CLASS_MATERIALS_BUCKET).remove([filePath]);
-    teacherStatus.textContent = insertError.message || "No se ha podido guardar la información del PDF.";
+    setText(teacherStatus, () => errorText(insertError, t("ui.unableToSaveThePDFMetadata")));
     input.value = "";
     return;
   }
 
   await reloadClassSessions();
   renderStudents();
-  teacherStatus.textContent = "PDF guardado para visualizarlo desde la web.";
+  setText(teacherStatus, () => t("ui.pdfSavedAndReadyToViewOnTheWebsite"));
   input.value = "";
 });
 
@@ -1914,14 +1901,15 @@ editStudentSelect?.addEventListener("change", () => {
   const selectedStudent = applySelectedStudentToForm();
 
   if (selectedStudent && pendingEditSelection) {
-    const selectionLabel = selectedStudent.type === "unavailable"
-      ? "No disponible"
-      : subjectNames[pendingEditSelection.subject];
-    const studentLabel = selectedStudent.type === "unavailable"
-      ? "Hueco no disponible"
+    const selectionLabel = () => selectedStudent.type === "unavailable"
+      ? t("busy")
+      : subjectNames[selectedClass.subject];
+    const studentLabel = () => selectedStudent.type === "unavailable"
+      ? t("ui.unavailableTimeSlot")
       : [selectedStudent.name, selectedStudent.surname].filter(Boolean).join(" ") || selectedStudent.username || selectedStudent.email;
 
-    editScheduleStatus.innerHTML = `<strong>${selectionLabel}: ${pendingEditSelection.dateLabel}</strong><span>Seleccionado: ${escapeHTML(studentLabel)}.</span>`;
+    const selectedClass = pendingEditSelection;
+    setHTML(editScheduleStatus, () => `<strong>${selectionLabel()}: ${selectedClass.dateISO ? formatFullDate(parseDateKey(selectedClass.dateISO)) : selectedClass.dateLabel}</strong><span>${escapeHTML(t("selectedStudent", { name: studentLabel() }))}</span>`);
   }
 });
 
@@ -1935,15 +1923,13 @@ teacherForm.addEventListener("input", () => {
 
 previousWeek.addEventListener("click", () => {
   weekStart = addWeeks(weekStart, -1);
-  scheduleStatus.textContent =
-    "Calendario general de lectura: aquí aparecen todas las clases de todos los alumnos.";
+  setText(scheduleStatus, () => t("ui.readOnlyOverviewAllStudentsClassesAppearHere"));
   renderSchedule();
 });
 
 nextWeek.addEventListener("click", () => {
   weekStart = addWeeks(weekStart, 1);
-  scheduleStatus.textContent =
-    "Calendario general de lectura: aquí aparecen todas las clases de todos los alumnos.";
+  setText(scheduleStatus, () => t("ui.readOnlyOverviewAllStudentsClassesAppearHere"));
   renderSchedule();
 });
 
@@ -1959,16 +1945,14 @@ editSubjectButtons.forEach((button) => {
 editPreviousWeek?.addEventListener("click", () => {
   editWeekStart = addWeeks(editWeekStart, -1);
   clearPendingEditSelection();
-  editScheduleStatus.textContent =
-    "Calendario editable: elige alumno, día y horario para guardar una clase.";
+  setText(editScheduleStatus, () => t("ui.editableCalendarChooseAStudentDayAndTimeToSaveAClass"));
   renderEditableSchedule();
 });
 
 editNextWeek?.addEventListener("click", () => {
   editWeekStart = addWeeks(editWeekStart, 1);
   clearPendingEditSelection();
-  editScheduleStatus.textContent =
-    "Calendario editable: elige alumno, día y horario para guardar una clase.";
+  setText(editScheduleStatus, () => t("ui.editableCalendarChooseAStudentDayAndTimeToSaveAClass"));
   renderEditableSchedule();
 });
 
@@ -1979,3 +1963,30 @@ renderStudents();
 renderSchedule();
 renderEditableSchedule();
 updateStudentAccessControls();
+
+onLanguageChange(() => {
+  classSessionBookings.forEach(booking => {
+    booking.subjectName = isUnavailable(booking)
+      ? t("busy")
+      : subjectNames[booking.subject] || booking.subject || t("ui.class");
+    const date = parseDateKey(booking.dateISO);
+    if (date) booking.dateLabel = formatFullDate(date);
+  });
+  if (pendingEditSelection?.dateISO) {
+    pendingEditSelection.dateLabel = formatFullDate(parseDateKey(pendingEditSelection.dateISO));
+  }
+  if (teacherUserLabel) {
+    setText(teacherUserLabel, () => teacherProfile.username || teacherProfile.email || t("ui.teacher"));
+  }
+  const selectedStudent = editStudentSelect.value;
+  const selectedDay = editDaySelect.value;
+  fillStudentSelect(selectedStudent);
+  editStudentSelect.value = selectedStudent;
+  fillEditDaySelect(selectedDay);
+  editDaySelect.value = selectedDay;
+  renderTodaySummary();
+  renderStudents();
+  renderSchedule();
+  renderEditableSchedule();
+  updateStudentAccessControls();
+});

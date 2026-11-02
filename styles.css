@@ -1845,3 +1845,386 @@ body.modal-open {
     flex-direction: column;
   }
 }
+
+/* Keep desktop geometry; let compact screens reflow within their viewport. */
+@media (max-width: 1100px) {
+  :root {
+    --header-h: 174px;
+  }
+
+  .topbar {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 8px 12px;
+    padding: 10px 16px;
+  }
+
+  .brand {
+    grid-column: 1;
+    grid-row: 1;
+    width: 170px;
+    max-width: 100%;
+    min-height: 80px;
+  }
+
+  .brand img {
+    max-height: 80px;
+  }
+
+  .nav {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    min-width: 0;
+    min-height: 48px;
+    padding: 2px 6px;
+    transform: none;
+    overflow: visible;
+  }
+
+  .nav a {
+    min-width: 0;
+    padding: 6px;
+    text-align: center;
+    overflow-wrap: anywhere;
+  }
+
+  .nav a:first-child {
+    flex-grow: 1.6;
+  }
+
+  .session-actions,
+  .topbar > .user-toggle {
+    grid-column: 2;
+    grid-row: 1;
+    justify-self: end;
+    align-self: end;
+    min-width: 0;
+    max-width: 100%;
+    margin: 38px 0 0;
+    transform: none;
+  }
+
+  .user-toggle,
+  .logout-toggle {
+    min-width: 0;
+    padding: 8px 12px;
+    overflow-wrap: anywhere;
+    text-align: center;
+  }
+
+  .lang-switch {
+    top: 8px;
+    right: 16px;
+    z-index: 2;
+  }
+
+  .lang-toggle,
+  .lang-button {
+    min-height: 36px;
+  }
+
+  .hero-whatsapp {
+    position: static;
+    justify-self: end;
+    max-width: 100%;
+    min-height: 44px;
+  }
+
+  .teacher-slot-editor {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .teacher-slot-editor > div:first-child {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 980px) {
+  main,
+  section,
+  article,
+  aside,
+  form,
+  fieldset,
+  label,
+  .schedule-shell,
+  .schedule-scroll,
+  .week-controls > *,
+  .profile-card > *,
+  .profile-summary > *,
+  .student-file-card *,
+  .teacher-today *,
+  .teacher-slot-editor > *,
+  .user-modal__panel > *,
+  .booking-modal__panel > * {
+    min-width: 0;
+  }
+
+  img,
+  video,
+  canvas {
+    max-width: 100%;
+    height: auto;
+    object-fit: contain;
+  }
+
+  input:not([type="checkbox"]):not([type="radio"]),
+  select,
+  textarea {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    font-size: 16px;
+  }
+
+  button,
+  a,
+  span,
+  strong,
+  legend {
+    overflow-wrap: anywhere;
+  }
+
+  .user-form .teacher-access-fields label {
+    grid-template-columns: minmax(0, 1fr);
+    align-items: start;
+  }
+
+  .teacher-access-fields > .user-form__status {
+    grid-column: 1 / -1;
+  }
+
+  .method-grid {
+    grid-auto-flow: row;
+    grid-auto-columns: auto;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    overflow: visible;
+  }
+
+  .method-grid article {
+    min-height: 0;
+    padding: 24px;
+  }
+
+  .teacher-today {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .teacher-today > div:first-child {
+    padding: 0 0 12px;
+    border-right: 0;
+    border-bottom: 1px solid rgba(246, 247, 235, 0.18);
+  }
+
+  .teacher-today-list article {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .class-material-name {
+    flex-basis: 100%;
+  }
+
+  .class-material-upload,
+  .class-material-view,
+  .teacher-remove,
+  .subject-tabs .tab {
+    min-height: 44px;
+  }
+
+  .schedule-scroll {
+    max-width: 100%;
+    overscroll-behavior-x: contain;
+  }
+
+  .booking-modal,
+  .user-modal {
+    padding: 12px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  .booking-modal__panel,
+  .user-modal__panel {
+    min-width: 0;
+    max-width: 100%;
+    max-height: calc(100vh - 24px);
+    max-height: calc(100dvh - 24px);
+    padding: 52px 24px 24px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  .booking-modal__close,
+  .user-modal__close {
+    width: 44px;
+    height: 44px;
+    top: 4px;
+    right: 4px;
+  }
+
+  .pdf-modal iframe {
+    min-width: 0;
+    height: 55vh;
+    height: 55dvh;
+  }
+
+  .availability-panel .contact-inline {
+    max-width: 100%;
+  }
+
+  .availability-panel .contact-inline span {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+}
+
+@media (max-width: 620px) {
+  :root {
+    --header-h: 160px;
+  }
+
+  .topbar {
+    padding: 8px 12px;
+    gap: 8px;
+  }
+
+  .brand {
+    width: 120px;
+    min-height: 76px;
+  }
+
+  .brand img {
+    max-height: 76px;
+  }
+
+  .session-actions {
+    gap: 4px;
+    max-width: 160px;
+  }
+
+  .session-actions .user-toggle,
+  .session-actions .logout-toggle {
+    padding: 8px;
+  }
+
+  .lang-switch {
+    right: 12px;
+  }
+
+  .lang-toggle,
+  .lang-button {
+    min-height: 40px;
+  }
+
+  .hero,
+  .section {
+    padding-right: 16px;
+    padding-left: 16px;
+  }
+
+  .hero-statement {
+    font-size: 3.5rem;
+    letter-spacing: 0;
+    gap: 28px;
+    line-height: 1;
+  }
+
+  .hero-copy {
+    padding: 20px;
+    gap: 22px;
+  }
+
+  .hero-copy h1 {
+    font-size: 2.2rem;
+    line-height: 1.08;
+  }
+
+  .hero-copy .hero-eyebrow {
+    letter-spacing: 0;
+  }
+
+  .profile-hero h1 {
+    font-size: 2.5rem;
+  }
+
+  .profile-card h2,
+  .profile-summary h2 {
+    font-size: 2rem;
+    line-height: 1.08;
+  }
+
+  .method-grid,
+  .user-form fieldset,
+  .teacher-slot-editor,
+  .teacher-today-list article {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .method-grid article,
+  .profile-card,
+  .profile-summary {
+    padding: 20px;
+  }
+
+  .schedule-shell {
+    padding: 10px;
+  }
+
+  .week-controls {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .week-current {
+    grid-column: 1 / -1;
+    grid-row: 1;
+  }
+
+  .week-button {
+    padding: 10px 6px;
+    font-size: 0.85rem;
+  }
+
+  .teacher-slot-editor {
+    padding: 12px;
+  }
+
+  .teacher-slot-actions .button {
+    white-space: normal;
+  }
+
+  .subject-tabs .tab {
+    flex: 1 1 40%;
+    min-width: 0;
+  }
+
+  .button {
+    min-width: 0;
+    max-width: 100%;
+    text-align: center;
+    white-space: normal;
+  }
+
+  .booking-modal__panel,
+  .user-modal__panel {
+    padding-right: 18px;
+    padding-left: 18px;
+    gap: 14px;
+  }
+
+  .booking-modal__panel h2,
+  .user-modal__panel h2 {
+    font-size: 2rem;
+  }
+
+  .availability-panel {
+    padding: 20px;
+  }
+
+  .availability-panel p {
+    font-size: 1.25rem;
+  }
+
+  .footer {
+    gap: 8px;
+  }
+}

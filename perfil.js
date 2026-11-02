@@ -1,13 +1,10 @@
 import { supabase } from "./supabaseClient.js";
 
+const { t, locale, subjectLabel, onLanguageChange, setText, setHTML, errorText } = window.SapheI18n;
+
 const hours = ["15:00", "16:00", "17:00", "18:00", "19:00", "20:00", "21:00"];
 const days = ["Lunes", "Martes", "Miercoles", "Jueves", "Viernes"];
-const subjectNames = {
-  mathEs: "Matematicas en castellano",
-  mathEn: "Calculus in English",
-  physicsEs: "Fisica en castellano",
-  physicsEn: "Physics in English",
-};
+const subjectNames = new Proxy({}, { get: (_, key) => subjectLabel(key) });
 
 const profileForm = document.querySelector("#profile-form");
 const profileStatus = document.querySelector("#profile-status");
@@ -41,6 +38,7 @@ let profile = null;
 let classBookings = [];
 let weekStart = getWeekStart(new Date());
 let activeClassMaterialUrl = "";
+let activeNoteBooking = null;
 
 function redirectToHome() {
   window.location.replace("index.html#inicio");
@@ -87,7 +85,7 @@ function parseDateKey(dateISO) {
 
 function normalizeClassSession(session, materialsByClassSession = new Map()) {
   const bookingDate = parseDateKey(session.date);
-  const subjectName = subjectNames[session.subject] || session.subject || "Clase";
+  const subjectName = subjectNames[session.subject] || session.subject || t("ui.class");
   const hour = normalizeTime(session.start_time);
   const endHour = normalizeTime(session.end_time);
   const dateLabel = bookingDate ? formatFullDate(bookingDate) : "";
@@ -159,7 +157,7 @@ async function loadStudentClasses(studentId) {
   } catch (error) {
     console.error("Error cargando materiales de clase:", error);
     if (scheduleStatus) {
-      scheduleStatus.textContent = "Tus clases se han cargado, pero no se han podido cargar los materiales PDF.";
+      setText(scheduleStatus, () => t("ui.yourClassesHaveLoadedButThePDFMaterialsCouldNotBeLoaded"));
     }
   }
 
@@ -184,17 +182,17 @@ const sessionProfile = await loadStudentProfile();
 
 if (!sessionProfile.user) {
   redirectToHome();
-  throw new Error("Alumno no autenticado.");
+  throw new Error(t("ui.studentIsNotSignedIn"));
 }
 
 if (sessionProfile.profile?.role === "teacher") {
   redirectToTeacher();
-  throw new Error("El profesor no puede usar el perfil de alumno.");
+  throw new Error(t("ui.teachersCannotUseTheStudentProfile"));
 }
 
 if (sessionProfile.profile?.role !== "student") {
   redirectToHome();
-  throw new Error("Perfil de alumno no autorizado.");
+  throw new Error(t("ui.studentProfileAccessDenied"));
 }
 
 profile = sessionProfile.profile;
@@ -207,9 +205,9 @@ try {
   console.error("Error cargando alumno académico:", error);
   classBookings = [];
   if (scheduleStatus) {
-    scheduleStatus.textContent = error?.code === "PGRST116"
-      ? "Tu cuenta no tiene un alumno académico vinculado todavía."
-      : "No se ha podido cargar tu alumno académico vinculado.";
+    setText(scheduleStatus, () => error?.code === "PGRST116"
+      ? t("ui.yourAccountIsNotLinkedToAStudentRecordYet")
+      : t("ui.unableToLoadYourLinkedStudentRecord"));
   }
 }
 
@@ -220,7 +218,7 @@ if (academicStudent?.id) {
     console.error("Error cargando clases del alumno:", error);
     classBookings = [];
     if (scheduleStatus) {
-      scheduleStatus.textContent = "No se han podido cargar tus clases.";
+      setText(scheduleStatus, () => t("ui.unableToLoadYourClasses"));
     }
   }
 } else {
@@ -245,7 +243,7 @@ function escapeAttribute(value) {
 }
 
 function getProfileName() {
-  return [profile?.first_name, profile?.last_name].filter(Boolean).join(" ") || profile?.username || "Mi usuario";
+  return [profile?.first_name, profile?.last_name].filter(Boolean).join(" ") || profile?.username || t("profileTitle");
 }
 
 function getVisibleBookings() {
@@ -268,11 +266,11 @@ function saveProfile(nextProfile) {
 
 function updateProfileHeader() {
   const accountLabel = getProfileName();
-  profileHeading.textContent = accountLabel;
+  setText(profileHeading, () => accountLabel);
   if (profileSignupTitle) {
-    profileSignupTitle.textContent = `${accountLabel}, ¿a qué clase te vas a inscribir?`;
+    profileSignupTitle.textContent = t("signupQuestion", { name: accountLabel });
   }
-  profileUserLabel.textContent = accountLabel;
+  setText(profileUserLabel, () => accountLabel);
 }
 
 function fillProfileForm() {
@@ -332,18 +330,18 @@ function formatDateKey(date) {
 }
 
 function formatMonth(date) {
-  return new Intl.DateTimeFormat("es-ES", {
+  return new Intl.DateTimeFormat(locale(), {
     month: "long",
     year: "numeric",
   }).format(date);
 }
 
 function formatDayHeader(day, date) {
-  return `${day} ${date.getDate()}`;
+  return `${new Intl.DateTimeFormat(locale(), { weekday: "long" }).format(date)} ${date.getDate()}`;
 }
 
 function formatFullDate(date) {
-  return new Intl.DateTimeFormat("es-ES", {
+  return new Intl.DateTimeFormat(locale(), {
     weekday: "long",
     day: "numeric",
     month: "long",
@@ -351,7 +349,7 @@ function formatFullDate(date) {
 }
 
 function formatFullDateWithYear(date) {
-  return new Intl.DateTimeFormat("es-ES", {
+  return new Intl.DateTimeFormat(locale(), {
     weekday: "long",
     day: "numeric",
     month: "long",
@@ -370,8 +368,8 @@ function updateWeekHeader(weekDates) {
       ? formatMonth(weekStart)
       : `${formatMonth(weekStart)} - ${formatMonth(weekEnd)}`;
 
-  currentMonth.textContent = monthLabel;
-  currentWeek.textContent = `${weekStart.getDate()} - ${weekEnd.getDate()}`;
+  setText(currentMonth, () => monthLabel);
+  setText(currentWeek, () => `${weekStart.getDate()} - ${weekEnd.getDate()}`);
 }
 
 function bookingMatches(booking, day, hour, dateISO) {
@@ -452,7 +450,7 @@ function getMaterialButtonHTML(material) {
 
   return `
     <button class="class-material-view" type="button" data-material-view="${escapeAttribute(material.id)}">
-      Ver PDF
+      ${t("ui.viewPDF")}
     </button>
   `;
 }
@@ -467,12 +465,12 @@ function releaseClassMaterialUrl() {
 
 function showClassMaterialError(message) {
   if (profileStatus) {
-    profileStatus.textContent = message;
+    setText(profileStatus, () => message);
     return;
   }
 
   if (scheduleStatus) {
-    scheduleStatus.textContent = message;
+    setText(scheduleStatus, () => message);
   }
 }
 
@@ -482,7 +480,7 @@ async function openClassMaterial(material) {
   }
 
   if (!material?.file_path) {
-    showClassMaterialError("Este material no tiene un archivo PDF asociado.");
+    showClassMaterialError(t("ui.thisMaterialHasNoAssociatedPDFFile"));
     return;
   }
 
@@ -492,13 +490,13 @@ async function openClassMaterial(material) {
 
   if (error || !data?.signedUrl) {
     console.error("Error generando URL firmada del material:", error);
-    showClassMaterialError("No se ha podido abrir el PDF de esta clase.");
+    showClassMaterialError(t("ui.unableToOpenThePDFForThisClass"));
     return;
   }
 
   releaseClassMaterialUrl();
   activeClassMaterialUrl = data.signedUrl;
-  classMaterialTitle.textContent = material.file_name || "PDF de la clase";
+  setText(classMaterialTitle, () => material.file_name || t("ui.classPDF"));
   classMaterialFrame.src = `${activeClassMaterialUrl}#toolbar=0&navpanes=0&scrollbar=1`;
   classMaterialModal.hidden = false;
   document.body.classList.add("modal-open");
@@ -537,8 +535,8 @@ function renderStudentNextClass() {
 
   if (!nextClass) {
     studentNextClass.innerHTML = `
-      <p>Hoy es ${escapeHTML(today)}.</p>
-      <p>Tu próxima clase todavía no está asignada.</p>
+      <p>${escapeHTML(t("today", { date: today }))}</p>
+      <p>${t("noNextClass")}</p>
     `;
     return;
   }
@@ -550,15 +548,15 @@ function renderStudentNextClass() {
   const notesHTML = hasNote
     ? `
       <p class="student-next-class__note">
-        <span>Notas:</span>
+        <span>${t("ui.notes")}</span>
         <strong>${escapeHTML(nextClass.notes)}</strong>
       </p>
     `
     : "";
 
   studentNextClass.innerHTML = `
-    <p>Hoy es ${escapeHTML(today)}.</p>
-    <p>Tu próxima clase es el ${escapeHTML(classDateLabel)} de ${escapeHTML(nextClass.hour)} a ${escapeHTML(endHour)}.</p>
+    <p>${escapeHTML(t("today", { date: today }))}</p>
+    <p>${escapeHTML(t("nextClass", { date: classDateLabel, start: nextClass.hour, end: endHour }))}</p>
     ${notesHTML}
   `;
 }
@@ -593,7 +591,7 @@ function renderClassLink() {
   }
 
   studentClassLink.hidden = false;
-  studentClassLink.textContent = "ENTRAR A CLASE";
+  setText(studentClassLink, () => t("ui.joinCLASS"));
   studentClassLink.href = classLink;
   studentClassLink.target = "_blank";
   studentClassLink.rel = "noopener noreferrer";
@@ -617,13 +615,14 @@ function openClassNote(booking) {
   if (!classNoteModal) {
     return;
   }
+  activeNoteBooking = booking;
 
   const endHour = booking.endHour || getEndHour(booking.hour);
   const hasTeacherNote = Boolean(booking.notes && booking.notes.trim());
 
-  classNoteTitle.textContent = booking.subjectName || "Clase";
-  classNoteTime.textContent = `${booking.dateLabel || booking.day || "Sin fecha"} · ${booking.hour} - ${endHour}`;
-  classNoteText.textContent = hasTeacherNote ? booking.notes : "No hay notas para esta clase.";
+  setText(classNoteTitle, () => booking.subjectName || t("ui.class"));
+  setText(classNoteTime, () => `${booking.dateLabel || booking.day || t("ui.noDate")} · ${booking.hour} - ${endHour}`);
+  setText(classNoteText, () => hasTeacherNote ? booking.notes : t("ui.thereAreNoNotesForThisClass"));
   classNoteText.classList.toggle("has-teacher-note", hasTeacherNote);
 
   if (classNoteMaterial) {
@@ -632,17 +631,17 @@ function openClassNote(booking) {
     if (materials.length) {
       classNoteMaterial.hidden = false;
       classNoteMaterial.innerHTML = `
-        <span>Material PDF:</span>
+        <span>${t("ui.pdfMaterial")}</span>
         ${materials.map((material) => `
           <div class="student-class-material">
-            <strong>${escapeHTML(material.file_name || "PDF de la clase")}</strong>
+            <strong>${escapeHTML(material.file_name || t("ui.classPDF"))}</strong>
             ${getMaterialButtonHTML(material)}
           </div>
         `).join("")}
       `;
     } else {
       classNoteMaterial.hidden = false;
-      classNoteMaterial.innerHTML = "<span>No hay materiales adjuntos para esta clase.</span>";
+      classNoteMaterial.innerHTML = `<span>${t("ui.thereAreNoMaterialsAttachedToThisClass")}</span>`;
     }
   }
 
@@ -669,27 +668,27 @@ function renderBookings() {
   renderClassLink();
 
   if (bookings.length === 0) {
-    bookingList.innerHTML = "<p>Todavía no tienes clases dadas.</p>";
+    bookingList.innerHTML = `<p>${t("ui.youHaveNoCompletedClassesYet")}</p>`;
     return;
   }
 
   bookingList.innerHTML = bookings
     .map((booking) => {
       const endHour = booking.endHour || getEndHour(booking.hour);
-      const subjectLabel = booking.subjectName || "Clase";
+      const subjectLabel = booking.subjectName || t("ui.class");
       const classDate = getBookingDate(booking);
       const classDateLabel = classDate ? formatFullDateWithYear(classDate) : booking.dateLabel || booking.day;
       const notesHTML = booking.notes && booking.notes.trim()
-        ? `<div class="past-class-note"><span>Notas de la clase:</span><p>${escapeHTML(booking.notes)}</p></div>`
-        : `<div class="past-class-note past-class-note--empty"><span>Notas de la clase:</span><p>Sin notas registradas.</p></div>`;
+        ? `<div class="past-class-note"><span>${t("ui.classNotes")}</span><p>${escapeHTML(booking.notes)}</p></div>`
+        : `<div class="past-class-note past-class-note--empty"><span>${t("ui.classNotes")}</span><p>${t("ui.noNotesRecorded")}</p></div>`;
       const materials = booking.materials || [];
       const materialHTML = materials.length
         ? `
           <div class="student-class-material">
-            <span>Material PDF:</span>
+            <span>${t("ui.pdfMaterial")}</span>
             ${materials.map((material) => `
               <div class="student-class-material">
-                <strong>${escapeHTML(material.file_name || "PDF de la clase")}</strong>
+                <strong>${escapeHTML(material.file_name || t("ui.classPDF"))}</strong>
                 ${getMaterialButtonHTML(material)}
               </div>
             `).join("")}
@@ -699,9 +698,9 @@ function renderBookings() {
       return `
         <article>
           <strong>${escapeHTML(subjectLabel)}</strong>
-          <span>Fecha: ${escapeHTML(classDateLabel)}</span>
-          <span>Hora de inicio: ${escapeHTML(booking.hour)}</span>
-          <span>Hora de fin: ${escapeHTML(endHour)}</span>
+          <span>${t("ui.date")} ${escapeHTML(classDateLabel)}</span>
+          <span>${t("ui.startTimec2af")} ${escapeHTML(booking.hour)}</span>
+          <span>${t("ui.endTime4a7a")} ${escapeHTML(endHour)}</span>
           ${notesHTML}
           ${materialHTML}
         </article>
@@ -718,7 +717,7 @@ function renderSchedule() {
   scheduleHead.innerHTML = "";
   scheduleBody.innerHTML = "";
 
-  ["Hora", ...days.map((day, index) => formatDayHeader(day, weekDates[index]))].forEach((label, index) => {
+  [t("time"), ...days.map((day, index) => formatDayHeader(day, weekDates[index]))].forEach((label, index) => {
     const th = document.createElement("th");
 
     if (index > 0 && formatDateKey(weekDates[index - 1]) === formatDateKey(new Date())) {
@@ -765,14 +764,14 @@ function renderSchedule() {
 
           button.type = "button";
           button.className = `slot ${isBusy ? "busy" : "reserved"} slot-readonly`;
-          button.textContent = isBusy ? "No disponible" : assignedClass.subjectName || "Clase";
+          button.textContent = isBusy ? t("busy") : assignedClass.subjectName || t("ui.class");
           applySlotTiming(button, assignedClass);
           button.disabled = isBusy;
           button.setAttribute(
             "aria-label",
             isBusy
-              ? `No disponible el ${dateLabel} de ${assignedClass.hour} a ${assignedClass.endHour || getEndHour(assignedClass.hour)}`
-              : `${assignedClass.subjectName || "Clase"} asignada el ${dateLabel} de ${assignedClass.hour} a ${assignedClass.endHour || getEndHour(assignedClass.hour)}`
+              ? t("unavailableAria", { date: dateLabel, start: assignedClass.hour, end: assignedClass.endHour || getEndHour(assignedClass.hour) })
+              : t("assignedAria", { subject: assignedClass.subjectName || t("ui.class"), date: dateLabel, start: assignedClass.hour, end: assignedClass.endHour || getEndHour(assignedClass.hour) })
           );
 
           if (!isBusy) {
@@ -788,9 +787,9 @@ function renderSchedule() {
 
         button.type = "button";
         button.className = "slot available slot-readonly";
-        button.textContent = "Libre";
+        button.textContent = t("available");
         button.disabled = true;
-        button.setAttribute("aria-label", `${dateLabel} a las ${hour}`);
+        button.setAttribute("aria-label", t("timeAria", { date: dateLabel, time: hour }));
         cell.appendChild(button);
       }
 
@@ -806,22 +805,20 @@ profileForm?.addEventListener("submit", (event) => {
   const nextProfile = readProfileForm();
 
   saveProfile(nextProfile);
-  profileStatus.textContent = "Perfil guardado.";
+  setText(profileStatus, () => t("profileSaved"));
   renderBookings();
   renderSchedule();
 });
 
 previousWeek.addEventListener("click", () => {
   weekStart = addWeeks(weekStart, -1);
-  scheduleStatus.textContent =
-    "Calendario de lectura: tus clases se muestran marcadas por el profesor.";
+  setText(scheduleStatus, () => t("ui.readOnlyCalendarClassesScheduledByYourTeacherAreHighlighted"));
   renderSchedule();
 });
 
 nextWeek.addEventListener("click", () => {
   weekStart = addWeeks(weekStart, 1);
-  scheduleStatus.textContent =
-    "Calendario de lectura: tus clases se muestran marcadas por el profesor.";
+  setText(scheduleStatus, () => t("ui.readOnlyCalendarClassesScheduledByYourTeacherAreHighlighted"));
   renderSchedule();
 });
 
@@ -871,3 +868,15 @@ updateProfileHeader();
 fillProfileForm();
 renderBookings();
 renderSchedule();
+
+onLanguageChange(() => {
+  classBookings.forEach(booking => {
+    booking.subjectName = subjectNames[booking.subject] || booking.subject || t("ui.class");
+    const date = parseDateKey(booking.dateISO);
+    if (date) booking.dateLabel = formatFullDate(date);
+  });
+  updateProfileHeader();
+  renderBookings();
+  renderSchedule();
+  if (activeNoteBooking && !classNoteModal.hidden) openClassNote(activeNoteBooking);
+});
