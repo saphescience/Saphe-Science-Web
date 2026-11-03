@@ -14,7 +14,7 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Playfair+Display:wght@600;700;800&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=133" />
+    <link rel="stylesheet" href="styles.css?v=134" />
   </head>
   <body>
     <header class="topbar">
@@ -67,6 +67,42 @@
           <h2 data-i18n="ui.enrolledStudents">Alumnos inscritos</h2>
         </div>
         <div id="teacher-student-list" class="student-card-grid" aria-live="polite"></div>
+      </section>
+
+      <section class="section teacher-billing" id="teacher-billing" aria-labelledby="billing-heading">
+        <div class="section-head billing-heading">
+          <h2 id="billing-heading" data-i18n="billing.heading">Facturación por alumno</h2>
+          <button class="button button-ghost" id="billing-download" type="button" disabled data-i18n="billing.download" data-i18n-title="billing.downloadPending" title="Descarga de factura pendiente de configurar">Descargar factura</button>
+        </div>
+        <div class="billing-controls">
+          <label><span data-i18n="ui.student">Alumno</span><select id="billing-student"><option value="" data-i18n="ui.selectAStudent">Selecciona alumno</option></select></label>
+          <label><span data-i18n="billing.year">Año</span><input id="billing-year" type="number" min="1900" max="2200" step="1" /></label>
+          <label><span data-i18n="billing.month">Mes</span><select id="billing-month"></select></label>
+        </div>
+        <form class="billing-settings" id="billing-settings">
+          <label><span data-i18n="billing.payer">Pagador</span><input id="billing-payer" type="text" maxlength="200" autocomplete="off" disabled /></label>
+          <label><span data-i18n="billing.hourlyRate">Tarifa por hora (€)</span><input id="billing-rate" type="number" inputmode="decimal" min="0" max="99999999.99" step="0.01" required disabled /></label>
+          <button class="button button-primary" id="billing-save" type="submit" disabled data-i18n="billing.save">Guardar tarifa y pagador</button>
+          <p id="billing-settings-status" class="billing-settings-status" role="status"></p>
+        </form>
+        <p id="billing-status" class="billing-status" role="status"></p>
+        <dl class="billing-totals" aria-live="polite">
+          <div><dt data-i18n="billing.classes">Clases del mes</dt><dd id="billing-class-count">—</dd></div>
+          <div><dt data-i18n="billing.hours">Horas del mes</dt><dd id="billing-hours">—</dd></div>
+          <div><dt data-i18n="billing.amount">Importe de las clases</dt><dd id="billing-amount">—</dd></div>
+        </dl>
+        <div class="billing-period">
+          <h3 id="billing-period"></h3>
+          <p><span data-i18n="billing.payer">Pagador</span>: <strong id="billing-payer-label"></strong></p>
+        </div>
+        <div class="billing-list-scroll" tabindex="0" role="region" aria-label="Desglose mensual de clases" data-i18n-aria-label="billing.breakdown">
+          <table class="billing-table">
+            <thead><tr><th scope="col" data-i18n="billing.date">Fecha</th><th scope="col" data-i18n="billing.subject">Asignatura</th><th scope="col" data-i18n="billing.time">Horario</th><th scope="col" data-i18n="billing.duration">Horas</th><th scope="col" data-i18n="billing.lineAmount">Importe</th></tr></thead>
+            <tbody id="billing-rows"></tbody>
+          </table>
+        </div>
+        <h3 class="billing-year-heading" data-i18n="billing.annualCalendar">Calendario anual</h3>
+        <div id="billing-calendar" class="billing-calendar" hidden></div>
       </section>
 
       <section class="schedule section profile-schedule teacher-schedule" id="profesor-calendario">
@@ -258,7 +294,7 @@
       </div>
     </div>
 
-    <script src="i18n.js?v=132"></script>
-    <script type="module" src="profesor.js?v=132"></script>
+    <script src="i18n.js?v=134"></script>
+    <script type="module" src="profesor.js?v=134"></script>
   </body>
 </html>

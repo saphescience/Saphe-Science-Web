@@ -1,4 +1,5 @@
 import { supabase } from "./supabaseClient.js";
+import { createTeacherBilling } from "./teacherBilling.js";
 
 const { t, locale, subjectLabel, onLanguageChange, setText, setHTML, errorText } = window.SapheI18n;
 
@@ -61,6 +62,7 @@ let studentProfilesLoadError = null;
 let classSessionBookings = [];
 let classSessionsLoadError = null;
 let editingStudentId = "";
+let billingPanel = null;
 
 function redirectToHome() {
   window.location.replace("index.html#inicio");
@@ -828,6 +830,7 @@ function renderTodaySummary() {
 }
 
 function renderStudents() {
+  billingPanel?.updateStudents();
   if (!studentList) {
     return;
   }
@@ -1410,6 +1413,8 @@ async function reloadClassSessions() {
     classSessionsLoadError = error;
     console.error("Error cargando clases:", error);
     setText(teacherStatus, () => t("ui.unableToReloadClasses"));
+  } finally {
+    billingPanel?.reload();
   }
 }
 
@@ -1954,6 +1959,14 @@ editNextWeek?.addEventListener("click", () => {
   clearPendingEditSelection();
   setText(editScheduleStatus, () => t("ui.editableCalendarChooseAStudentDayAndTimeToSaveAClass"));
   renderEditableSchedule();
+});
+
+billingPanel = createTeacherBilling({
+  root: document.querySelector("#teacher-billing"),
+  teacherId: teacherProfile.id,
+  getStudents: getRegisteredStudents,
+  getStudentName: getStudentDisplayName,
+  hasStudentError: () => Boolean(studentProfilesLoadError),
 });
 
 fillDraft();
