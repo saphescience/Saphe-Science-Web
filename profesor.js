@@ -1,5 +1,5 @@
 import { supabase } from "./supabaseClient.js";
-import { createTeacherBilling } from "./teacherBilling.js";
+import { createTeacherBilling } from "./teacherBilling.js?v=135";
 
 const { t, locale, subjectLabel, onLanguageChange, setText, setHTML, errorText } = window.SapheI18n;
 

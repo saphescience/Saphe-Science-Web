@@ -13,7 +13,24 @@ La migración crea únicamente `student_billing_settings`, sus permisos y sus
 policies. No modifica las tablas o policies existentes. El borrado de un alumno
 elimina automáticamente su configuración de facturación mediante la foreign key.
 
-## Cálculo
+## Estado de pago
+
+Ejecutar `supabase/migrations/20261103_class_sessions_is_paid.sql` para añadir
+`class_sessions.is_paid`. Las clases existentes empiezan sin marcar como pagadas.
+El profesor puede marcar o desmarcar cada clase en el listado mensual. Se conserva
+la protección de UPDATE ya existente por `teacher_id = auth.uid()` y rol profesor;
+no se añaden permisos ni se cambian policies.
+
+El calendario muestra verde para días con todas sus clases pagadas y rojo cuando
+ninguna está pagada. Si hay varios estados el mismo día, combina ambos colores.
+Si la columna todavía no existe, el calendario y los importes siguen funcionando,
+pero el pago aparece sin consultar y no se permite modificarlo.
+
+No cambia el importe de las clases: este estado es un control manual, no una
+confirmación bancaria ni una factura emitida. Si falla un guardado, no se confirma
+el cambio en la interfaz. No se almacena el estado en localStorage.
+
+## Cálculo de importes
 
 - Se incluyen todas las clases asignadas al alumno en el mes, también las futuras.
 - Se excluyen los bloqueos (`type = 'unavailable'`).

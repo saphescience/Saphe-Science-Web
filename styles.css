@@ -1896,6 +1896,77 @@ body.modal-open {
   font-size: 0.6rem;
 }
 
+.billing-day.payment-paid,
+.payment-swatch--paid {
+  color: #14532d;
+  background: #d8f3df;
+  border-bottom: 2px solid #15803d;
+}
+
+.billing-day.payment-unpaid,
+.payment-swatch--unpaid {
+  color: #7f1d1d;
+  background: #fee2e2;
+  border-bottom: 2px solid #b91c1c;
+}
+
+.billing-day.payment-mixed,
+.payment-swatch--mixed {
+  color: var(--ink);
+  background: linear-gradient(90deg, #d8f3df 50%, #fee2e2 50%);
+  border-bottom: 2px solid var(--muted);
+}
+
+.billing-payment-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 20px;
+  margin: 0 0 16px;
+  font-weight: 750;
+}
+
+.billing-payment-legend[hidden] {
+  display: none;
+}
+
+.billing-payment-legend > span {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.payment-swatch {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  flex: 0 0 auto;
+}
+
+.teacher-billing .billing-paid-control {
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 8px;
+  align-items: center;
+  min-height: 44px;
+  min-width: 130px;
+  cursor: pointer;
+}
+
+.teacher-billing .billing-paid-control input {
+  width: 20px;
+  height: 20px;
+  min-height: 20px;
+  padding: 0;
+  accent-color: #15803d;
+}
+
+.billing-paid-control.is-paid {
+  color: #14532d;
+}
+
+.billing-paid-control.is-unpaid {
+  color: #991b1b;
+}
+
 .billing-month > p {
   margin-top: 8px;
   color: var(--muted);
@@ -1928,7 +1999,7 @@ body.modal-open {
 
 .billing-table {
   width: 100%;
-  min-width: 600px;
+  min-width: 760px;
   border-collapse: collapse;
   text-align: left;
 }
@@ -1944,8 +2015,8 @@ body.modal-open {
   background: var(--plum);
 }
 
-.billing-table td:last-child,
-.billing-table th:last-child {
+.billing-table td:nth-child(5),
+.billing-table th:nth-child(5) {
   text-align: right;
   white-space: nowrap;
 }

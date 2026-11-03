@@ -22,20 +22,25 @@ function formatHours(seconds) {
   return seconds === null ? "—" : new Intl.NumberFormat(locale(), { maximumFractionDigits: 2 }).format(seconds / 3600);
 }
 
-async function readYear(teacherId, studentId, year) {
+async function readYear(teacherId, studentId, year, includePayment = true) {
   const sessions = new Map();
   for (let offset = 0; ; offset += PAGE_SIZE) {
     const { data, error } = await supabase.from("class_sessions")
-      .select("id, student_id, teacher_id, subject, date, start_time, end_time, type")
+      .select(`id, student_id, teacher_id, subject, date, start_time, end_time, type${includePayment ? ", is_paid" : ""}`)
       .eq("teacher_id", teacherId).eq("student_id", studentId).eq("type", "class")
       .gte("date", `${year}-01-01`).lt("date", `${year + 1}-01-01`)
       .order("date", { ascending: true }).order("start_time", { ascending: true }).order("id", { ascending: true })
       .range(offset, offset + PAGE_SIZE - 1);
-    if (error) throw error;
+    if (error) {
+      if (includePayment && ["42703", "PGRST204"].includes(error.code) && String(error.message).includes("is_paid")) {
+        return readYear(teacherId, studentId, year, false);
+      }
+      throw error;
+    }
     (data || []).forEach(session => sessions.set(session.id, session));
     if ((data || []).length < PAGE_SIZE) break;
   }
-  return [...sessions.values()];
+  return { sessions: [...sessions.values()], paymentsReady: includePayment };
 }
 
 export function createTeacherBilling({ root, teacherId, getStudents, getStudentName, hasStudentError }) {
@@ -51,6 +56,8 @@ export function createTeacherBilling({ root, teacherId, getStudents, getStudentN
   const settingsStatus = find("#billing-settings-status");
   const calendar = find("#billing-calendar");
   const rows = find("#billing-rows");
+  const paymentStatus = find("#billing-payment-status");
+  const paymentLegend = find("#billing-payment-legend");
   const now = new Date();
   let studentId = "";
   let year = now.getFullYear();
@@ -65,6 +72,11 @@ export function createTeacherBilling({ root, teacherId, getStudents, getStudentN
   let dirty = false;
   let generation = 0;
   let calendarKey = "";
+  let paymentsReady = false;
+  let paymentVersion = 0;
+  let pendingPayment = null;
+  let paymentMessage = "";
+  let paymentError = null;
 
   yearInput.value = String(year);
   const monthName = index => new Intl.DateTimeFormat(locale(), { month: "long" }).format(new Date(year, index, 1));
@@ -87,6 +99,9 @@ export function createTeacherBilling({ root, teacherId, getStudents, getStudentN
       settingsMessage = "";
       settingsError = null;
       classError = null;
+      paymentsReady = false;
+      paymentMessage = "";
+      paymentError = null;
     }
     studentSelect.value = studentId;
     render();
@@ -95,13 +110,17 @@ export function createTeacherBilling({ root, teacherId, getStudents, getStudentN
   function renderCalendar() {
     calendar.hidden = !studentId || loading || Boolean(classError);
     if (calendar.hidden) { calendarKey = ""; calendar.replaceChildren(); return; }
-    const nextKey = `${generation}:${studentId}:${year}:${month}:${locale()}`;
+    const nextKey = `${generation}:${studentId}:${year}:${month}:${locale()}:${paymentsReady}:${paymentVersion}:${Boolean(pendingPayment)}:${saving}`;
     if (calendarKey === nextKey) return;
     calendarKey = nextKey;
     const restoreFocus = calendar.contains(document.activeElement);
     const dates = new Map();
     sessions.forEach(session => {
-      if (session.type === "class" && session.student_id === studentId) dates.set(session.date, (dates.get(session.date) || 0) + 1);
+      if (session.type !== "class" || session.student_id !== studentId) return;
+      const day = dates.get(session.date) || { count: 0, paid: 0 };
+      day.count++;
+      if (session.is_paid === true) day.paid++;
+      dates.set(session.date, day);
     });
     const weekdays = Array.from({ length: 7 }, (_, index) => new Date(2024, 0, index + 1));
     const weekdayLong = new Intl.DateTimeFormat(locale(), { weekday: "long" });
@@ -117,13 +136,17 @@ export function createTeacherBilling({ root, teacherId, getStudents, getStudentN
         const day = cell - offset + 1;
         if (day < 1 || day > days) return '<td aria-hidden="true"></td>';
         const dateKey = `${year}-${String(index + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
-        const count = dates.get(dateKey) || 0;
+        const { count = 0, paid = 0 } = dates.get(dateKey) || {};
         total += count;
         const dateLabel = dateFormat.format(new Date(year, index, day));
-        return `<td><span class="billing-day${count ? " has-classes" : ""}" title="${html(t("billing.dayClasses", { date: dateLabel, classes: t(count === 1 ? "classCountOne" : "classCountMany", { count }) }))}">${day}${count > 1 ? `<small>${count}</small>` : ""}</span></td>`;
+        const paymentClass = !count || !paymentsReady ? "" : paid === count ? " payment-paid" : paid === 0 ? " payment-unpaid" : " payment-mixed";
+        const description = paymentsReady && count
+          ? t("billing.dayPayments", { date: dateLabel, paid, unpaid: count - paid })
+          : t("billing.dayClasses", { date: dateLabel, classes: t(count === 1 ? "classCountOne" : "classCountMany", { count }) });
+        return `<td><span class="billing-day${count ? " has-classes" : ""}${paymentClass}" title="${html(description)}" aria-label="${html(description)}">${day}${count > 1 ? `<small>${count}</small>` : ""}</span></td>`;
       });
       return `<article class="billing-month${index === month ? " is-selected" : ""}">
-        <h3><button type="button" data-billing-month="${index}" aria-pressed="${index === month}">${html(monthName(index))}</button></h3>
+        <h3><button type="button" data-billing-month="${index}" aria-pressed="${index === month}" ${pendingPayment || saving ? "disabled" : ""}>${html(monthName(index))}</button></h3>
         <table aria-label="${html(`${monthName(index)} ${year}`)}"><thead><tr>${weekdayHead}</tr></thead><tbody>${Array.from({ length: 6 }, (_, row) => `<tr>${cells.slice(row * 7, row * 7 + 7).join("")}</tr>`).join("")}</tbody></table>
         <p>${html(t(total === 1 ? "classCountOne" : "classCountMany", { count: total }))}</p>
       </article>`;
@@ -139,29 +162,36 @@ export function createTeacherBilling({ root, teacherId, getStudents, getStudentN
     find("#billing-amount").textContent = unavailable ? "—" : formatMoney(summary.amountCents);
     find("#billing-period").textContent = new Intl.DateTimeFormat(locale(), { month: "long", year: "numeric" }).format(new Date(year, month, 1));
     find("#billing-payer-label").textContent = payerInput.value.trim() || t("billing.payerPending");
-    if (unavailable) { rows.innerHTML = `<tr><td colspan="5">${html(t(!studentId ? "billing.chooseStudent" : loading ? "billing.loading" : "billing.classesError"))}</td></tr>`; return; }
-    if (!summary.rows.length) { rows.innerHTML = `<tr><td colspan="5">${html(t("billing.noClasses"))}</td></tr>`; return; }
+    if (unavailable) { rows.innerHTML = `<tr><td colspan="6">${html(t(!studentId ? "billing.chooseStudent" : loading ? "billing.loading" : "billing.classesError"))}</td></tr>`; return; }
+    if (!summary.rows.length) { rows.innerHTML = `<tr><td colspan="6">${html(t("billing.noClasses"))}</td></tr>`; return; }
     rows.innerHTML = summary.rows.map(({ session, duration, amountCents }) => {
       const date = parseDate(session.date);
+      const paid = pendingPayment?.id === session.id ? pendingPayment.paid : session.is_paid === true;
+      const paymentLabel = !paymentsReady ? t("billing.paymentUnknown") : pendingPayment?.id === session.id ? t("billing.paymentSaving") : t(paid ? "billing.paid" : "billing.unpaid");
+      const checkboxLabel = t("billing.paymentCheckbox", { date: date ? new Intl.DateTimeFormat(locale(), { dateStyle: "long" }).format(date) : session.date, start: String(session.start_time).slice(0, 5), end: String(session.end_time).slice(0, 5) });
       return `<tr>
         <td>${html(date ? new Intl.DateTimeFormat(locale(), { day: "numeric", month: "short", year: "numeric" }).format(date) : t("ui.noDate"))}</td>
         <td>${html(window.SapheI18n.subjectLabel(session.subject) || session.subject || t("ui.class"))}</td>
         <td>${html(String(session.start_time).slice(0, 5))} – ${html(String(session.end_time).slice(0, 5))}</td>
         <td>${html(duration === null ? t("billing.invalidTime") : formatHours(duration))}</td>
         <td>${html(formatMoney(amountCents))}</td>
+        <td><label class="billing-paid-control ${paymentsReady ? paid ? "is-paid" : "is-unpaid" : ""}"><input type="checkbox" data-class-paid="${html(session.id)}" ${paid && paymentsReady ? "checked" : ""} ${!paymentsReady || pendingPayment || saving ? "disabled" : ""} aria-label="${html(checkboxLabel)}" /><span>${html(paymentLabel)}</span></label></td>
       </tr>`;
     }).join("");
     if (summary.invalid) status.textContent = t("billing.invalidClasses");
   }
 
   function render() {
-    root.setAttribute("aria-busy", String(loading));
-    studentSelect.disabled = saving || hasStudentError();
-    payerInput.disabled = rateInput.disabled = !studentId || !settingsReady || saving || loading;
-    saveButton.disabled = !studentId || !settingsReady || saving || loading;
+    root.setAttribute("aria-busy", String(loading || Boolean(pendingPayment)));
+    studentSelect.disabled = saving || Boolean(pendingPayment) || hasStudentError();
+    payerInput.disabled = rateInput.disabled = !studentId || !settingsReady || saving || loading || Boolean(pendingPayment);
+    saveButton.disabled = !studentId || !settingsReady || saving || loading || Boolean(pendingPayment);
     monthSelect.innerHTML = Array.from({ length: 12 }, (_, index) => `<option value="${index}">${html(monthName(index))}</option>`).join("");
     monthSelect.value = String(month);
-    yearInput.disabled = saving;
+    monthSelect.disabled = Boolean(pendingPayment);
+    yearInput.disabled = saving || Boolean(pendingPayment);
+    paymentLegend.hidden = !studentId || loading || !paymentsReady || Boolean(classError);
+    paymentStatus.textContent = !studentId || loading || classError ? "" : pendingPayment ? t("billing.paymentSaving") : paymentError ? errorText(paymentError, t("billing.paymentError")) : !paymentsReady ? t("billing.paymentUnavailable") : paymentMessage ? t(paymentMessage) : "";
     status.textContent = hasStudentError() ? t("ui.unableToLoadStudentsFromSupabase") : !studentId ? t("billing.chooseStudent") : loading ? t("billing.loading") : classError ? errorText(classError, t("billing.classesError")) : "";
     settingsStatus.textContent = !studentId ? "" : settingsError ? errorText(settingsError, t("billing.settingsError")) : saving ? t("billing.saving") : settingsMessage ? t(settingsMessage) : dirty ? t("billing.unsaved") : settingsReady && rate() === null ? t("billing.ratePending") : "";
     renderCalendar();
@@ -174,6 +204,9 @@ export function createTeacherBilling({ root, teacherId, getStudents, getStudentN
       sessions = [];
       loading = false;
       settingsReady = false;
+      paymentsReady = false;
+      paymentMessage = "";
+      paymentError = null;
       settingsError = classError = null;
       settingsMessage = "";
       dirty = false;
@@ -187,6 +220,11 @@ export function createTeacherBilling({ root, teacherId, getStudents, getStudentN
     loading = true;
     classError = null;
     sessions = [];
+    paymentsReady = false;
+    if (clearSettings) {
+      paymentMessage = "";
+      paymentError = null;
+    }
     if (needsSettings) {
       settingsReady = false;
       settingsError = null;
@@ -203,7 +241,10 @@ export function createTeacherBilling({ root, teacherId, getStudents, getStudentN
     ]);
     if (token !== generation) return;
     loading = false;
-    if (classesResult.status === "fulfilled") sessions = classesResult.value;
+    if (classesResult.status === "fulfilled") {
+      sessions = classesResult.value.sessions;
+      paymentsReady = classesResult.value.paymentsReady;
+    }
     else classError = classesResult.reason;
     if (needsSettings) {
       const result = settingsResult.status === "fulfilled" ? settingsResult.value : { error: settingsResult.reason };
@@ -227,7 +268,7 @@ export function createTeacherBilling({ root, teacherId, getStudents, getStudentN
   monthSelect.addEventListener("change", () => { month = Number(monthSelect.value); render(); });
   calendar.addEventListener("click", event => {
     const button = event.target.closest("[data-billing-month]");
-    if (!button) return;
+    if (!button || pendingPayment || saving) return;
     month = Number(button.dataset.billingMonth);
     render();
   });
@@ -236,10 +277,48 @@ export function createTeacherBilling({ root, teacherId, getStudents, getStudentN
     settingsMessage = "";
     render();
   }));
+  rows.addEventListener("change", async event => {
+    const input = event.target.closest("[data-class-paid]");
+    if (!input || !paymentsReady || loading || saving || pendingPayment) return;
+    const session = sessions.find(session => session.id === input.dataset.classPaid && session.student_id === studentId && session.type === "class");
+    if (!session || !currentStudent()) return;
+    const requestedStudent = studentId;
+    const requestedYear = year;
+    const paid = input.checked;
+    const writeGeneration = generation;
+    pendingPayment = { id: session.id, paid };
+    paymentError = null;
+    paymentMessage = "";
+    render();
+    try {
+      const { data, error } = await supabase.from("class_sessions")
+        .update({ is_paid: paid, updated_at: new Date().toISOString() })
+        .eq("id", session.id).eq("teacher_id", teacherId).eq("student_id", requestedStudent).eq("type", "class")
+        .select("id, is_paid").single();
+      if (error) throw error;
+      if (data?.id !== session.id || data.is_paid !== paid) throw new Error(t("billing.paymentError"));
+      if (studentId === requestedStudent && year === requestedYear) {
+        const visibleSession = sessions.find(row => row.id === session.id);
+        if (visibleSession) visibleSession.is_paid = paid;
+        paymentVersion++;
+        paymentMessage = "billing.paymentSaved";
+        if (generation !== writeGeneration) await load(false);
+      }
+    } catch (error) {
+      console.error("Class payment:", error);
+      if (studentId === requestedStudent && year === requestedYear) paymentError = error;
+    } finally {
+      pendingPayment = null;
+      render();
+      if (studentId === requestedStudent && year === requestedYear && document.activeElement === document.body) {
+        [...rows.querySelectorAll("[data-class-paid]")].find(input => input.dataset.classPaid === session.id)?.focus({ preventScroll: true });
+      }
+    }
+  });
   settingsForm.addEventListener("submit", async event => {
     event.preventDefault();
     const cents = parseRateToCents(rateInput.value);
-    if (!currentStudent() || !settingsReady || loading || saving) return;
+    if (!currentStudent() || !settingsReady || loading || saving || pendingPayment) return;
     if (cents === null) { settingsMessage = "billing.invalidRate"; render(); return; }
     const requestedId = studentId;
     const token = generation;

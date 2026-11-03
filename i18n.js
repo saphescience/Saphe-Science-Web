@@ -2,6 +2,17 @@
   // Shared interface copy. Student names, notes and file names are not translated.
   const messages = {
   "billing.heading": { "es": "Facturación por alumno", "en": "Student billing" },
+  "billing.paymentState": { "es": "Estado de pago", "en": "Payment status" },
+  "billing.paid": { "es": "Pagado", "en": "Paid" },
+  "billing.unpaid": { "es": "No pagado", "en": "Unpaid" },
+  "billing.mixed": { "es": "Pagos mixtos", "en": "Mixed payments" },
+  "billing.dayPayments": { "es": "{date}: {paid} pagadas, {unpaid} no pagadas", "en": "{date}: {paid} paid, {unpaid} unpaid" },
+  "billing.paymentCheckbox": { "es": "Clase del {date}, de {start} a {end}: marcar como pagada", "en": "Class on {date}, {start}–{end}: mark as paid" },
+  "billing.paymentUnknown": { "es": "Sin consultar", "en": "Not loaded" },
+  "billing.paymentUnavailable": { "es": "El estado de pago todavía no está disponible.", "en": "Payment status is not available yet." },
+  "billing.paymentSaving": { "es": "Guardando pago...", "en": "Saving payment..." },
+  "billing.paymentSaved": { "es": "Estado de pago guardado.", "en": "Payment status saved." },
+  "billing.paymentError": { "es": "No se ha podido guardar el estado de pago.", "en": "Unable to save the payment status." },
   "billing.download": { "es": "Descargar factura", "en": "Download invoice" },
   "billing.downloadPending": { "es": "Descarga de factura pendiente de configurar", "en": "Invoice download is not yet configured" },
   "billing.year": { "es": "Año", "en": "Year" },
