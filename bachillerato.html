@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title data-i18n="courses.bachillerato">Bachillerato</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css?v=136" />
+    <link rel="stylesheet" href="courseCatalog.css?v=1" />
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="index.html#inicio" aria-label="Ir al inicio de Saphe sCience" data-i18n-aria-label="ui.goToTheSapheScienceHomePage">
+        <img src="assets/fondo7-integrated.png" alt="Saphe sCience" />
+      </a>
+      <nav class="nav nav--courses" aria-label="Navegacion principal" data-i18n-aria-label="ui.mainNavigation">
+        <a href="index.html#inicio" data-i18n="navSchedule">Inicio</a>
+        <div class="course-nav">
+          <button class="course-nav__toggle" type="button" aria-expanded="false" aria-controls="course-links"><span data-i18n="courses.nav">Cursos</span><span aria-hidden="true">⌄</span></button>
+          <ul class="course-nav__menu" id="course-links" hidden>
+            <li><a href="ib.html" data-i18n="courses.ib">IB — Bachillerato Internacional</a></li>
+            <li><a href="bachillerato.html" aria-current="page" data-i18n="courses.bachillerato">Bachillerato</a></li>
+            <li><a href="eso.html" data-i18n="courses.eso">ESO</a></li>
+            <li><a href="pau.html" data-i18n="courses.pau">PAU</a></li>
+            <li><a href="intensivos.html" data-i18n="courses.intensivos">Intensivos</a></li>
+          </ul>
+        </div>
+        <a href="index.html#contacto" data-i18n="navContact">Contacto</a>
+        <a href="index.html#metodo" data-i18n="navFaqs">FAQS</a>
+      </nav>
+      <a class="user-toggle" href="perfil.html"><span data-i18n="userButton">Mi perfil</span></a>
+      <div class="lang-switch" aria-label="Seleccion de idioma" data-i18n-aria-label="ui.languageSelection">
+        <button class="lang-toggle" type="button" aria-expanded="false" data-i18n="ui.languages">Idiomas</button>
+        <div class="lang-menu" hidden>
+          <button class="lang-button is-active" type="button" data-lang="es" data-i18n="ui.spanish">Castellano</button>
+          <button class="lang-button" type="button" data-lang="en">English</button>
+        </div>
+      </div>
+    </header>
+    <main class="course-page">
+      <section class="course-page__content" aria-labelledby="course-title">
+        <h1 id="course-title" data-i18n="courses.bachillerato">Bachillerato</h1>
+        <div class="catalog" data-course-catalog="bachillerato">
+          <p class="catalog-intro"></p>
+          <div class="catalog-steps"></div>
+          <div class="catalog-result"></div>
+          <div class="catalog-sources"></div>
+          <p class="catalog-status" role="status"></p>
+          <noscript><p>El catálogo requiere JavaScript. / The catalogue requires JavaScript.</p></noscript>
+        </div>
+        <div class="course-page__actions">
+          <a class="button button-primary" href="index.html#inicio" data-i18n="courses.home">Volver al inicio</a>
+          <a class="button button-ghost" href="index.html#contacto" data-i18n="courses.contact">Contactar con la academia</a>
+        </div>
+      </section>
+    </main>
+    <footer class="footer"><span>Saphe sCience</span><span data-i18n="footerText">Academy</span></footer>
+    <script src="i18n.js?v=136"></script>
+    <script src="courseNavigation.js?v=136"></script>
+    <script src="courseCatalogData.js?v=1"></script>
+    <script src="courseCatalog.js?v=1"></script>
+  </body>
+</html>

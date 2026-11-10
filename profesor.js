@@ -1,5 +1,6 @@
 import { supabase } from "./supabaseClient.js";
 import { createTeacherBilling } from "./teacherBilling.js?v=135";
+import { mountTeacherIntensives } from "./teacherIntensives.js?v=1";
 
 const { t, locale, subjectLabel, onLanguageChange, setText, setHTML, errorText } = window.SapheI18n;
 
@@ -1960,6 +1961,8 @@ editNextWeek?.addEventListener("click", () => {
   setText(editScheduleStatus, () => t("ui.editableCalendarChooseAStudentDayAndTimeToSaveAClass"));
   renderEditableSchedule();
 });
+
+mountTeacherIntensives(document.querySelector("#teacher-intensives"), () => classSessionBookings);
 
 billingPanel = createTeacherBilling({
   root: document.querySelector("#teacher-billing"),

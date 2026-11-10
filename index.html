@@ -14,7 +14,7 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Playfair+Display:wght@600;700;800&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=133" />
+    <link rel="stylesheet" href="styles.css?v=136" />
   </head>
   <body>
     <header class="topbar">
@@ -22,10 +22,20 @@
         <img src="assets/fondo7-integrated.png" alt="Saphe sCience" />
       </a>
 
-      <nav class="nav" aria-label="Navegacion principal" data-i18n-aria-label="ui.mainNavigation">
+      <nav class="nav nav--courses" aria-label="Navegacion principal" data-i18n-aria-label="ui.mainNavigation">
         <a href="#inicio" data-i18n="navSchedule">Inicio</a>
-        <a href="#metodo" data-i18n="navFaqs">FAQS</a>
+        <div class="course-nav">
+          <button class="course-nav__toggle" type="button" aria-expanded="false" aria-controls="course-links"><span data-i18n="courses.nav">Cursos</span><span aria-hidden="true">⌄</span></button>
+          <ul class="course-nav__menu" id="course-links" hidden>
+            <li><a href="ib.html" data-i18n="courses.ib">IB — Bachillerato Internacional</a></li>
+            <li><a href="bachillerato.html" data-i18n="courses.bachillerato">Bachillerato</a></li>
+            <li><a href="eso.html" data-i18n="courses.eso">ESO</a></li>
+            <li><a href="pau.html" data-i18n="courses.pau">PAU</a></li>
+            <li><a href="intensivos.html" data-i18n="courses.intensivos">Intensivos</a></li>
+          </ul>
+        </div>
         <a href="#contacto" data-i18n="navContact">Contacto</a>
+        <a href="#metodo" data-i18n="navFaqs">FAQS</a>
       </nav>
 
       <a class="user-toggle" id="user-toggle" href="perfil.html" data-auth-toggle>
@@ -64,7 +74,7 @@
             </svg>
             <span data-i18n="heroEyebrow">¿Qué es Saphe Science?</span>
           </p>
-          <h1 data-i18n="heroTitle">Saphe sCience es una academia con clases presenciales y online, especializada en matemáticas y física en castellano e inglés, para alumnos de ESO, Bachillerato y Bachillerato Internacional (IB).</h1>
+          <h1 data-i18n="heroTitle">Saphe Science es una academia de ciencias que imparte clases presenciales y online, especializada en IB, Bachillerato y ESO. Existen dos modalidades, castellano e inglés.</h1>
           <div class="hero-actions">
             <a class="button button-primary" href="#horario" data-i18n="heroPrimary">
               Reserva una clase
@@ -310,7 +320,8 @@
       <span data-i18n="footerText">Academy</span>
     </footer>
 
-    <script src="i18n.js?v=132"></script>
+    <script src="i18n.js?v=137"></script>
+    <script src="courseNavigation.js?v=136"></script>
     <script src="script.js?v=132"></script>
     <script type="module" src="auth.js?v=132"></script>
   </body>

@@ -1,6 +1,19 @@
 (() => {
   // Shared interface copy. Student names, notes and file names are not translated.
   const messages = {
+  "courses.nav": { "es": "Cursos", "en": "Courses" },
+  "courses.ib": { "es": "IB — Bachillerato Internacional", "en": "IB — International Baccalaureate" },
+  "courses.bachillerato": { "es": "Bachillerato", "en": "Spanish Bachillerato" },
+  "courses.eso": { "es": "ESO", "en": "Spanish Secondary Education (ESO)" },
+  "courses.pau": { "es": "PAU", "en": "PAU — Spanish University Entrance Exams" },
+  "courses.intensivos": { "es": "Intensivos", "en": "Intensive Courses" },
+  "courses.ibSoon": { "es": "Próximamente encontrarás toda la información sobre nuestros cursos de Bachillerato Internacional (IB).", "en": "More information about our International Baccalaureate (IB) courses will be available soon." },
+  "courses.bachilleratoSoon": { "es": "Próximamente encontrarás toda la información sobre nuestros cursos de Bachillerato.", "en": "More information about our Spanish Bachillerato courses will be available soon." },
+  "courses.esoSoon": { "es": "Próximamente encontrarás toda la información sobre nuestros cursos de ESO.", "en": "More information about our Spanish Secondary Education (ESO) courses will be available soon." },
+  "courses.pauSoon": { "es": "Próximamente encontrarás toda la información sobre nuestros cursos de PAU.", "en": "More information about our PAU Spanish university entrance exam courses will be available soon." },
+  "courses.intensivosSoon": { "es": "Próximamente encontrarás toda la información sobre nuestros cursos intensivos.", "en": "More information about our intensive courses will be available soon." },
+  "courses.home": { "es": "Volver al inicio", "en": "Back to home" },
+  "courses.contact": { "es": "Contactar con la academia", "en": "Contact the academy" },
   "billing.heading": { "es": "Facturación por alumno", "en": "Student billing" },
   "billing.paymentState": { "es": "Estado de pago", "en": "Payment status" },
   "billing.paid": { "es": "Pagado", "en": "Paid" },
@@ -70,8 +83,8 @@
     "en": "What is Saphe Science?"
   },
   "heroTitle": {
-    "es": "Saphe sCience es una academia con clases presenciales y online, especializada en matemáticas y física en castellano e inglés, para alumnos de ESO, Bachillerato y Bachillerato Internacional (IB).",
-    "en": "Saphe sCience is an academy offering in-person and online mathematics and physics classes in Spanish and English for students in ESO (Spanish secondary education), Bachillerato (Spanish upper secondary education) and the International Baccalaureate (IB)."
+    "es": "Saphe Science es una academia de ciencias que imparte clases presenciales y online, especializada en IB, Bachillerato y ESO. Existen dos modalidades, castellano e inglés.",
+    "en": "Saphe Science is a science academy offering in-person and online classes for IB, Bachillerato and ESO students. Classes are available in Spanish and English."
   },
   "heroPrimary": {
     "es": "Reserva una clase",

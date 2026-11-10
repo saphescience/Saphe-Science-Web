@@ -1,0 +1,115 @@
+.catalog-steps,
+.catalog-result,
+.catalog-sources {
+  margin-block: 28px;
+}
+
+.catalog-steps:empty,
+.catalog-result:empty,
+.catalog-sources:empty {
+  display: none;
+}
+
+.catalog-step {
+  padding-block: 18px;
+  border-top: 1px solid rgb(246 247 235 / 26%);
+}
+
+.catalog-step h2,
+.catalog-result h2,
+.catalog-sources h2 {
+  font-size: 1.3rem;
+  line-height: 1.3;
+  margin: 0 0 14px;
+}
+
+.catalog-step__number {
+  color: var(--sun);
+  margin-inline-end: 12px;
+  font: 700 0.85rem var(--font-body, sans-serif);
+}
+
+.catalog-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 205px), 1fr));
+  gap: 10px;
+}
+
+.catalog-choice {
+  min-height: 56px;
+  min-width: 0;
+  padding: 12px 14px;
+  text-align: left;
+  overflow-wrap: anywhere;
+  border: 1px solid rgb(246 247 235 / 35%);
+  border-radius: 6px;
+  background: rgb(246 247 235 / 8%);
+  color: var(--cream);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 150ms ease, border-color 150ms ease;
+}
+
+.catalog-choice:hover { border-color: var(--sun); }
+.catalog-choice[aria-pressed="true"] {
+  background: var(--sun);
+  color: var(--plum);
+  border-color: var(--sun);
+}
+
+.catalog-choice:focus-visible,
+.catalog-block summary:focus-visible,
+.catalog a:focus-visible {
+  outline: 2px solid var(--sun);
+  outline-offset: 3px;
+}
+
+.catalog-result .catalog-trail {
+  color: var(--sun);
+  font-weight: 700;
+  margin: 0 0 12px;
+}
+
+.catalog-result .catalog-note { margin: 0 0 12px; }
+.catalog-block {
+  margin: 8px 0;
+  padding-inline: 16px;
+  border-radius: 6px;
+  background: var(--cream);
+  color: var(--plum);
+}
+.catalog-block summary {
+  min-height: 44px;
+  padding-block: 12px;
+  cursor: pointer;
+  font-weight: 700;
+}
+.catalog-block p {
+  margin: 0;
+  padding-bottom: 14px;
+}
+.catalog-block a,
+.catalog-sources a { text-decoration: underline; text-underline-offset: 0.18em; }
+.catalog-sources ul { margin: 0; padding-inline-start: 20px; }
+.catalog-sources li + li { margin-top: 8px; }
+.catalog-sources a { overflow-wrap: anywhere; }
+.catalog-status {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.catalog[data-course-catalog="ib"] .catalog-intro {
+  border-inline-start: 3px solid var(--sun);
+  padding-inline-start: 16px;
+}
+@media (max-width: 620px) {
+  .catalog-options { grid-template-columns: minmax(0, 1fr); }
+  .catalog-choice { min-height: 48px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .catalog-choice { transition: none; }
+}
